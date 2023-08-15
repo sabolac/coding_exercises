@@ -9,7 +9,7 @@ public class Chapter1
     {
         StdOut.println(">>>>>>>>> Start Execution");
         // new App().runAll(args);
-        exercise_1_1_14();
+        exercise_1_1_19();
         StdOut.println(">>>>>>>>> End Execution");
     }
 
@@ -26,6 +26,10 @@ public class Chapter1
         exercise_1_1_12();
         exercise_1_1_13();
         exercise_1_1_14();
+        exercise_1_1_15();
+        exercise_1_1_16();
+        exercise_1_1_18();
+        exercise_1_1_19();
     }
 
     private static void exercise_1_1_1()
@@ -257,5 +261,131 @@ public class Chapter1
         {
             StdOut.printf("lg(%s) = %s\n", i, lg(i));
         }
+    }
+
+    private static int[] histogram(int[] a, int M)
+    {
+        int[] h = new int[M];
+        for (int i : a)
+        {
+            if (i >= 0 && i < M)
+                h[i]++;
+        }
+
+        return h;
+    }
+
+    private static void exercise_1_1_15()
+    {
+        // Write a static method histogram() that takes an array a[] of int values and
+        // an integer M as arguments and returns an array of length M whose ith entry is
+        // the number of times the integer i appeared in the argument array. If the
+        // values in a[] are all between 0 and M–1, the sum of the values in the
+        // returned array should be equal to a.length.
+        int[] a =
+        { 1, 2, 0, 2, 1, 1, 1, 2, 4 };
+
+        int[] h = histogram(a, 5);
+        for (int i : h)
+        {
+            StdOut.printf("%s ", i);
+        }
+    }
+
+    public static String exR1(int n)
+    {
+        if (n <= 0)
+            return "";
+        return exR1(n - 3) + n + exR1(n - 2) + n;
+    }
+
+    private static void exercise_1_1_16()
+    {
+        StdOut.printf("%s\n", exR1(6));
+    }
+
+    // returns a*b
+    public static int mystery1(int a, int b)
+    {
+        if (b == 0)
+            return 0;
+        if (b % 2 == 0)
+            return mystery1(a + a, b / 2);
+        return mystery1(a + a, b / 2) + a;
+    }
+
+    // returns pow(a,b)
+    public static int mystery2(int a, int b)
+    {
+        if (b == 0)
+            return 1;
+        if (b % 2 == 0)
+            return mystery2(a * a, b / 2);
+        return mystery2(a * a, b / 2) * a;
+    }
+
+    private static void exercise_1_1_18()
+    {
+        StdOut.printf("%s\n", mystery1(2, 25));
+        StdOut.printf("%s\n", mystery1(3, 11));
+        StdOut.printf("%s\n", mystery1(12, 7));
+
+        StdOut.printf("%s\n", mystery2(2, 10));
+        StdOut.printf("%s\n", mystery2(3, 4));
+        StdOut.printf("%s\n", mystery2(10, 4));
+    }
+
+    private static long fibonacci1(int N)
+    {
+        if (N == 0)
+            return 0;
+        if (N == 1)
+            return 1;
+        return fibonacci1(N - 1) + fibonacci1(N - 2);
+    }
+
+    private static long fibonacci(int N)
+    {
+        if (N == 0)
+            return 0;
+        if (N == 1)
+            return 1;
+        long[] savedResults = new long[N + 1];
+        savedResults[0] = 0;
+        savedResults[1] = 1;
+        return fibonacci(N - 1, savedResults) + fibonacci(N - 2, savedResults);
+    }
+
+    private static long fibonacci(int N, long[] savedResults)
+    {
+        if (N <= 1)
+            return savedResults[N];
+        if (savedResults[N - 1] == 0)
+            savedResults[N - 1] = fibonacci(N - 1, savedResults);
+        if (savedResults[N - 2] == 0)
+            savedResults[N - 2] = fibonacci(N - 2, savedResults);
+        if (savedResults[N] == 0)
+            savedResults[N] = savedResults[N - 1] + savedResults[N - 2];
+        return savedResults[N];
+    }
+
+    private static long fibonacciNonRecursive(int N)
+    {
+        long[] savedResults = new long[N + 1];
+        if (N == 0)
+            return 0;
+        if (N == 1)
+            return 1;
+        savedResults[0] = 0;
+        savedResults[1] = 1;
+        for (int i = 2; i <= N; i++)
+            savedResults[i] = savedResults[i - 1] + savedResults[i - 2];
+        return savedResults[N];
+    }
+
+    private static void exercise_1_1_19()
+    {
+        for (int N = 0; N < 90; N++)
+            StdOut.println(N + " " + fibonacciNonRecursive(N));
     }
 }
