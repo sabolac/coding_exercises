@@ -9,7 +9,7 @@ public class Chapter1
     {
         StdOut.println(">>>>>>>>> Start Execution");
         // new App().runAll(args);
-        exercise_1_1_19();
+        exercise_1_1_21();
         StdOut.println(">>>>>>>>> End Execution");
     }
 
@@ -30,6 +30,8 @@ public class Chapter1
         exercise_1_1_16();
         exercise_1_1_18();
         exercise_1_1_19();
+        exercise_1_1_20();
+        exercise_1_1_21();
     }
 
     private static void exercise_1_1_1()
@@ -387,5 +389,39 @@ public class Chapter1
     {
         for (int N = 0; N < 90; N++)
             StdOut.println(N + " " + fibonacciNonRecursive(N));
+    }
+
+    // returns ln(n!)
+    private static double lnFactorial(int n)
+    {
+        if (n == 0 || n == 1)
+            return 0;
+        return Math.log(n) + lnFactorial(n - 1);
+    }
+
+    private static void exercise_1_1_20()
+    {
+        StdOut.printf("%s\n", lnFactorial(0));
+        StdOut.printf("%s\n", lnFactorial(1));
+        StdOut.printf("%s\n", lnFactorial(5));
+        StdOut.printf("%s\n", lnFactorial(10));
+        StdOut.printf("%s\n", lnFactorial(12));
+    }
+
+    private static void exercise_1_1_21()
+    {
+        String name;
+        int v1;
+        int v2;
+        float avg;
+        StdOut.printf("Name\tVal1\tVal2\tAvg\n");
+        while (!StdIn.isEmpty())
+        {
+            name = StdIn.readString();
+            v1 = StdIn.readInt();
+            v2 = StdIn.readInt();
+            avg = ((float) v1) / v2;
+            StdOut.printf("%s\t%d\t%d\t%.3f\n", name, v1, v2, avg);
+        }
     }
 }
