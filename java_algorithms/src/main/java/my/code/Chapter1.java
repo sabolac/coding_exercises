@@ -9,7 +9,7 @@ public class Chapter1
     {
         StdOut.println(">>>>>>>>> Start Execution");
         // new App().runAll(args);
-        exercise_1_1_13();
+        exercise_1_1_14();
         StdOut.println(">>>>>>>>> End Execution");
     }
 
@@ -25,6 +25,7 @@ public class Chapter1
         exercise_1_1_11();
         exercise_1_1_12();
         exercise_1_1_13();
+        exercise_1_1_14();
     }
 
     private static void exercise_1_1_1()
@@ -231,6 +232,30 @@ public class Chapter1
                 StdOut.printf("%s ", arr[j][i]);
             }
             StdOut.println();
+        }
+    }
+
+    private static int lg(int n)
+    {
+        // logarithm is undefined for negative numbers and 0
+        if (n <= 0)
+        {
+            throw new IllegalArgumentException("logarithm is undefined for negative numbers and 0");
+        }
+
+        int i;
+        for (i = 0; (n >>>= 1) != 0; i++)
+            ;
+        return i;
+    }
+
+    private static void exercise_1_1_14()
+    {
+        // Write a static method lg() that takes an int value N as argument and returns
+        // the largest int not larger than the base-2 logarithm of N. Do not use Math.
+        for (int i = 1; i <= 32; i++)
+        {
+            StdOut.printf("lg(%s) = %s\n", i, lg(i));
         }
     }
 }
