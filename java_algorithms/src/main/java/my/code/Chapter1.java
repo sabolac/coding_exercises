@@ -14,7 +14,7 @@ public class Chapter1
     {
         StdOut.println(">>>>>>>>> Start Execution");
         // generateRandomInts();
-        exercise_1_1_23(args);
+        exercise_1_1_24(args);
         StdOut.println(">>>>>>>>> End Execution");
     }
 
@@ -484,5 +484,29 @@ public class Chapter1
         // whitelist, - to print numbers that are in the whitelist.
         boolean printMatching = args[1].equals("-");
         binarySearch(args[0], printMatching);
+    }
+
+    public static int gcd(int p, int q, boolean trace)
+    {
+        if (trace)
+            StdOut.printf("p:%s q:%s\n", p, q);
+        if (q == 0)
+            return p;
+        int r = p % q;
+        return gcd(q, r, trace);
+    }
+
+    private static void exercise_1_1_24(String[] args)
+    {
+        // Give the sequence of values of p and q that are computed when Euclid’s
+        // algorithm is used to compute the greatest common divisor of 105 and 24.
+        // Extend the code given on page 4 to develop a program Euclid that takes two
+        // integers from the command line and computes their greatest common divisor,
+        // printing out the two arguments for each call on the recursive method. Use
+        // your program to compute the greatest common divisor or 1111111 and 1234567.
+        int p = Integer.parseInt(args[0]);
+        int q = Integer.parseInt(args[1]);
+        int result = gcd(p, q, true);
+        StdOut.printf("gcd(%s, %s) = %s\n", p, q, result);
     }
 }
