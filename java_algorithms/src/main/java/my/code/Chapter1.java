@@ -1,7 +1,10 @@
 package my.code;
 
+import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.IntStream;
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -10,31 +13,9 @@ public class Chapter1
     public static void main(String[] args)
     {
         StdOut.println(">>>>>>>>> Start Execution");
-        // new App().runAll(args);
-        exercise_1_1_22();
+        // generateRandomInts();
+        exercise_1_1_23(args);
         StdOut.println(">>>>>>>>> End Execution");
-    }
-
-    public void runAll(String[] args)
-    {
-        exercise_1_1_1();
-        exercise_1_1_2();
-        exercise_1_1_3();
-        exercise_1_1_6();
-        exercise_1_1_7();
-        exercise_1_1_8();
-        exercise_1_1_9();
-        exercise_1_1_11();
-        exercise_1_1_12();
-        exercise_1_1_13();
-        exercise_1_1_14();
-        exercise_1_1_15();
-        exercise_1_1_16();
-        exercise_1_1_18();
-        exercise_1_1_19();
-        exercise_1_1_20();
-        exercise_1_1_21();
-        exercise_1_1_22();
     }
 
     private static void exercise_1_1_1()
@@ -430,14 +411,20 @@ public class Chapter1
 
     private static int rank(int key, int[] a)
     {
-        return rank(key, a, 0, a.length - 1, 0);
+        return rank(key, a, false);
+    }
+
+    private static int rank(int key, int[] a, boolean trace)
+    {
+        return rank(key, a, 0, a.length - 1, trace ? 0 : -1);
     }
 
     private static int rank(int key, int[] a, int lo, int hi, int depth)
     {
         // Index of key in a[], if present, is not smaller than lo and not larger
         // than hi.
-        StdOut.printf("%s lo:%s hi:%s\n", "  ".repeat(depth++), lo, hi);
+        if (depth >= 0)
+            StdOut.printf("%s lo:%s hi:%s\n", "  ".repeat(depth++), lo, hi);
         if (lo > hi)
             return -1;
         int mid = lo + (hi - lo) / 2;
@@ -457,5 +444,45 @@ public class Chapter1
         // Hint: Add an argument to the recursive method that keeps track of the depth.
         int[] a = IntStream.range(1, 100).toArray();
         rank(27, a);
+    }
+
+    private static void binarySearch(String fileName, boolean printMatching)
+    {
+        int[] whitelist = new In(fileName).readAllInts();
+        Arrays.sort(whitelist);
+        while (!StdIn.isEmpty())
+        {
+            int key = StdIn.readInt();
+            if (rank(key, whitelist) < 0)
+            {
+                if (!printMatching)
+                    StdOut.println(key);
+            }
+            else
+            {
+                if (printMatching)
+                    StdOut.println(key);
+            }
+        }
+    }
+
+    private static void generateRandomInts()
+    {
+        Random rd = new Random();
+        int maxValue = 100000;
+        int length = 1300;
+        for (int i = 0; i < length; i++)
+        {
+            StdOut.println(rd.nextInt(maxValue));
+        }
+    }
+
+    private static void exercise_1_1_23(String[] args)
+    {
+        // Add to the BinarySearch test client the ability to respond to a second
+        // argument: + to print numbers from standard input that are not in the
+        // whitelist, - to print numbers that are in the whitelist.
+        boolean printMatching = args[1].equals("-");
+        binarySearch(args[0], printMatching);
     }
 }
