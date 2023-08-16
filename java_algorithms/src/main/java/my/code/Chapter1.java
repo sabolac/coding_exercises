@@ -1,5 +1,7 @@
 package my.code;
 
+import java.util.stream.IntStream;
+
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -9,7 +11,7 @@ public class Chapter1
     {
         StdOut.println(">>>>>>>>> Start Execution");
         // new App().runAll(args);
-        exercise_1_1_21();
+        exercise_1_1_22();
         StdOut.println(">>>>>>>>> End Execution");
     }
 
@@ -32,6 +34,7 @@ public class Chapter1
         exercise_1_1_19();
         exercise_1_1_20();
         exercise_1_1_21();
+        exercise_1_1_22();
     }
 
     private static void exercise_1_1_1()
@@ -423,5 +426,36 @@ public class Chapter1
             avg = ((float) v1) / v2;
             StdOut.printf("%s\t%d\t%d\t%.3f\n", name, v1, v2, avg);
         }
+    }
+
+    private static int rank(int key, int[] a)
+    {
+        return rank(key, a, 0, a.length - 1, 0);
+    }
+
+    private static int rank(int key, int[] a, int lo, int hi, int depth)
+    {
+        // Index of key in a[], if present, is not smaller than lo and not larger
+        // than hi.
+        StdOut.printf("%s lo:%s hi:%s\n", "  ".repeat(depth++), lo, hi);
+        if (lo > hi)
+            return -1;
+        int mid = lo + (hi - lo) / 2;
+        if (key < a[mid])
+            return rank(key, a, lo, mid - 1, depth);
+        else if (key > a[mid])
+            return rank(key, a, mid + 1, hi, depth);
+        else
+            return mid;
+    }
+
+    private static void exercise_1_1_22()
+    {
+        // Write a version of BinarySearch that uses the recursive rank() given on page
+        // 25 and traces the method calls. Each time the recursive method is called,
+        // print the argument values lo and hi, indented by the depth of the recursion.
+        // Hint: Add an argument to the recursive method that keeps track of the depth.
+        int[] a = IntStream.range(1, 100).toArray();
+        rank(27, a);
     }
 }
