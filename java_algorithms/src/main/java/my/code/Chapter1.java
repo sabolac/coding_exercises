@@ -8,13 +8,15 @@ import java.util.stream.IntStream;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class Chapter1
 {
     public static void main(String[] args)
     {
         StdOut.println(">>>>>>>>> Start Execution");
-        exercise_1_1_29();
+        exercise_1_1_31();
         StdOut.println(">>>>>>>>> End Execution");
     }
 
@@ -658,5 +660,73 @@ public class Chapter1
         StdOut.printf("# equals 6:%s\n", countEquals(6, a));
         StdOut.printf("# equals 9:%s\n", countEquals(9, a));
         StdOut.printf("# equals -1:%s\n", countEquals(-1, a));
+    }
+
+    private static boolean relativePrime(int v1, int v2)
+    {
+        return gcd(v1, v2, false) == 1;
+    }
+
+    private static void exercise_1_1_30()
+    {
+        int n = 30;
+        boolean[][] arr = new boolean[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                arr[i][j] = relativePrime(i, j);
+
+        StdOut.printf("  ");
+        for (int column = 0; column < arr[0].length; column++)
+        {
+            StdOut.printf("%s ", column);
+        }
+        StdOut.printf("\n");
+
+        int row = 0;
+        for (boolean[] bs : arr)
+        {
+            StdOut.printf("%s ", row++);
+            for (boolean b : bs)
+            {
+                StdOut.printf("%s ", b ? '*' : ' ');
+            }
+            StdOut.printf("\n");
+        }
+    }
+
+    private static void exercise_1_1_31()
+    {
+        int SIZE = 1000;
+        int r = 400;
+        int N = 20;
+        double p = 0.5;
+        double[] x = new double[N];
+        double[] y = new double[N];
+
+        StdDraw.setCanvasSize(SIZE, SIZE);
+        StdDraw.setScale(-SIZE / 2, SIZE / 2);
+        StdDraw.enableDoubleBuffering();
+
+        double angleSpacing = 2 * Math.PI / N;
+        for (int i = 0; i < N; i++)
+        {
+            x[i] = r * Math.cos(i * angleSpacing);
+            y[i] = r * Math.sin(i * angleSpacing);
+        }
+
+        StdDraw.setPenColor(StdDraw.BOOK_BLUE);
+        for (int i = 0; i < N - 1; i++)
+            for (int j = i + 1; j < N; j++)
+                if (StdRandom.bernoulli(p))
+                    StdDraw.line(x[i], y[i], x[j], y[j]);
+
+        StdDraw.setPenRadius(.05);
+        StdDraw.setPenColor(StdDraw.BOOK_RED);
+        for (int i = 0; i < N; i++)
+        {
+            StdDraw.point(x[i], y[i]);
+        }
+
+        StdDraw.show();
     }
 }
