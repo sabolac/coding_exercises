@@ -1,5 +1,6 @@
 package my.code;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -13,8 +14,7 @@ public class Chapter1
     public static void main(String[] args)
     {
         StdOut.println(">>>>>>>>> Start Execution");
-        // generateRandomInts();
-        exercise_1_1_24(args);
+        exercise_1_1_29();
         StdOut.println(">>>>>>>>> End Execution");
     }
 
@@ -508,5 +508,155 @@ public class Chapter1
         int q = Integer.parseInt(args[1]);
         int result = gcd(p, q, true);
         StdOut.printf("gcd(%s, %s) = %s\n", p, q, result);
+    }
+
+    private static double binomial(int N, int k, double p)
+    {
+        double[][] savedResults = new double[N + 1][k + 1];
+        for (int i = 0; i <= N; i++)
+            for (int j = 0; j <= k; j++)
+                savedResults[i][j] = Double.NEGATIVE_INFINITY;
+
+        savedResults[0][0] = 1.0;
+        return binomial(N, k, p, savedResults);
+    }
+
+    private static double binomial(int N, int k, double p, double[][] savedResults)
+    {
+        if (N < 0 || k < 0)
+            return 0.0;
+
+        if (savedResults[N][k] != Double.NEGATIVE_INFINITY)
+            return savedResults[N][k];
+
+        double result1 = binomial(N - 1, k, p, savedResults);
+        double result2 = binomial(N - 1, k - 1, p, savedResults);
+        double result = (1.0 - p) * result1 + p * result2;
+        savedResults[N][k] = result;
+        return result;
+    }
+
+    private static void exercise_1_1_27()
+    {
+        double result = binomial(100, 20, 0.1);
+        StdOut.printf("result=%s", result);
+    }
+
+    private static void exercise_1_1_28()
+    {
+        // remove duplicates from a sorted array and print the resulting array
+        int maxValue = 100;
+        int length = 200;
+        Random rd = new Random();
+        int[] arr = new int[length];
+
+        for (int i = 0; i < arr.length; i++)
+        {
+            arr[i] = rd.nextInt(maxValue);
+        }
+        Arrays.sort(arr);
+
+        ArrayList<Integer> uniqueVals = new ArrayList<>();
+        int current = arr[0];
+        uniqueVals.add(current);
+        for (int i = 1; i < arr.length; i++)
+        {
+            if (arr[i] != current)
+            {
+                current = arr[i];
+                uniqueVals.add(current);
+            }
+        }
+
+        for (int i : uniqueVals)
+        {
+            StdOut.printf("%s ", i);
+        }
+    }
+
+    private static int countSmaller(int k, int[] arr)
+    {
+        return countSmaller(k, arr, 0, arr.length - 1);
+    }
+
+    private static int countSmaller(int k, int[] arr, int lo, int hi)
+    {
+        if (lo > hi)
+        {
+            if (hi < 0)
+                return 0;
+            while (hi < arr.length && arr[hi] < k)
+                hi++;
+            return hi;
+        }
+        int mid = lo + (hi - lo) / 2;
+        if (k < arr[mid])
+            return countSmaller(k, arr, lo, mid - 1);
+        if (k > arr[mid])
+            return countSmaller(k, arr, mid + 1, hi);
+        else
+        {
+            while (mid >= 0 && arr[mid] == k)
+                mid--;
+            return mid + 1;
+        }
+    }
+
+    private static int countEquals(int k, int[] arr)
+    {
+        int i = rank(k, arr);
+        if (i == -1)
+            return 0; // no match
+
+        int start = i, end = i;
+
+        while (start >= 0 && arr[start] == k)
+        {
+            start--;
+        }
+
+        while (end < arr.length && arr[end] == k)
+        {
+            end++;
+        }
+
+        return end - start - 1;
+    }
+
+    private static void exercise_1_1_29()
+    {
+        // Equal keys. Add to BinarySearch a static method rank() that takes a key and
+        // a sorted array of int values (some of which may be equal) as arguments and
+        // returns the number of elements that are smaller than the key and a similar
+        // method count() that returns the number of elements equal to the key. Note :
+        // If i and j are the values returned by rank(key, a) and count(key, a)
+        // respectively, then a[i..i+j-1] are the values in the array that are equal to
+        // key.
+        int[] a =
+        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 6, 8, 9 };
+        // StdOut.printf("# smaller than 3: %s\n", countSmaller(3, a));
+        StdOut.printf("# smaller than 0:%s\n", countSmaller(0, a));
+        StdOut.printf("# smaller than 1:%s\n", countSmaller(1, a));
+        StdOut.printf("# smaller than 2:%s\n", countSmaller(2, a));
+        StdOut.printf("# smaller than 3:%s\n", countSmaller(3, a));
+        StdOut.printf("# smaller than 4:%s\n", countSmaller(4, a));
+        StdOut.printf("# smaller than 5:%s\n", countSmaller(5, a));
+        StdOut.printf("# smaller than 6:%s\n", countSmaller(6, a));
+        StdOut.printf("# smaller than 7:%s\n", countSmaller(7, a));
+        StdOut.printf("# smaller than 8:%s\n", countSmaller(8, a));
+        StdOut.printf("# smaller than 9:%s\n", countSmaller(9, a));
+        StdOut.printf("# smaller than 10:%s\n", countSmaller(10, a));
+        StdOut.printf("# smaller than 20:%s\n", countSmaller(20, a));
+        StdOut.printf("# smaller than -1:%s\n", countSmaller(-1, a));
+
+        StdOut.printf("# equals 0:%s\n", countEquals(0, a));
+        StdOut.printf("# equals 1:%s\n", countEquals(1, a));
+        StdOut.printf("# equals 2:%s\n", countEquals(2, a));
+        StdOut.printf("# equals 3:%s\n", countEquals(3, a));
+        StdOut.printf("# equals 4:%s\n", countEquals(4, a));
+        StdOut.printf("# equals 5:%s\n", countEquals(5, a));
+        StdOut.printf("# equals 6:%s\n", countEquals(6, a));
+        StdOut.printf("# equals 9:%s\n", countEquals(9, a));
+        StdOut.printf("# equals -1:%s\n", countEquals(-1, a));
     }
 }
