@@ -16,11 +16,11 @@ public class Chapter1
     public static void main(String[] args)
     {
         StdOut.println(">>>>>>>>> Start Execution");
-        exercise_1_1_31();
+        exercise_1_1_33();
         StdOut.println(">>>>>>>>> End Execution");
     }
 
-    private static void exercise_1_1_1()
+    public static void exercise_1_1_1()
     {
         // Give the value of each of the following expressions
         StdOut.printf("( 0 + 15 ) / 2 = %s\n", ((0 + 15) / 2));
@@ -28,7 +28,7 @@ public class Chapter1
         StdOut.printf("true && false || true && true = %s\n", (true && false || true && true));
     }
 
-    private static void exercise_1_1_2()
+    public static void exercise_1_1_2()
     {
         // Give the type and value of each of the following expressions
         String typeName;
@@ -50,7 +50,7 @@ public class Chapter1
         StdOut.printf("1 + 2 + \"3\" = %s (%s)\n", (1 + 2 + "3"), typeName);
     }
 
-    private static void exercise_1_1_3()
+    public static void exercise_1_1_3()
     {
         StdOut.printf("Enter 3 integers seperated by space followed by Enter and Ctrl+D:");
         int[] numbers = StdIn.readAllInts();
@@ -75,7 +75,7 @@ public class Chapter1
         }
     }
 
-    private static void exercise_1_1_6()
+    public static void exercise_1_1_6()
     {
         int f = 0;
         int g = 1;
@@ -87,7 +87,7 @@ public class Chapter1
         }
     }
 
-    private static void exercise_1_1_7()
+    public static void exercise_1_1_7()
     {
         double t = 9.0;
         while (Math.abs(t - 9.0 / t) > 0.001)
@@ -110,14 +110,14 @@ public class Chapter1
 
     }
 
-    private static void exercise_1_1_8()
+    public static void exercise_1_1_8()
     {
         System.out.println('b');
         System.out.println('b' + 'c');
         System.out.println((char) ('a' + 4));
     }
 
-    private static String toBinaryString(int i)
+    public static String toBinaryString(int i)
     {
         StringBuilder sb = new StringBuilder();
         while (i != 0)
@@ -128,13 +128,13 @@ public class Chapter1
         return String.format("%32s", sb.reverse().toString()).replace(' ', '0');
     }
 
-    private static String toBinaryStringBuiltIn(int i)
+    public static String toBinaryStringBuiltIn(int i)
     {
         String s = Integer.toBinaryString(i);
         return String.format("%32s", s).replace(' ', '0');
     }
 
-    private static void exercise_1_1_9()
+    public static void exercise_1_1_9()
     {
         StdOut.printf("%s\n", toBinaryString(-1));
         StdOut.printf("%s\n", toBinaryStringBuiltIn(-1));
@@ -164,7 +164,7 @@ public class Chapter1
         StdOut.printf("%s\n", toBinaryStringBuiltIn(Integer.MIN_VALUE));
     }
 
-    private static void exercise_1_1_11()
+    public static void exercise_1_1_11()
     {
         // Write a code fragment that prints the contents of a two-dimensional boolean
         // array, using * to represent true and a space to represent false. Include row
@@ -195,7 +195,7 @@ public class Chapter1
         }
     }
 
-    private static void exercise_1_1_12()
+    public static void exercise_1_1_12()
     {
         int[] a = new int[10];
         for (int i = 0; i < 10; i++)
@@ -206,7 +206,7 @@ public class Chapter1
             System.out.println(a[i]);
     }
 
-    private static void exercise_1_1_13()
+    public static void exercise_1_1_13()
     {
         // Write a code fragment to print the transposition (rows and columns changed)
         // of a two-dimensional array with M rows and N columns.
@@ -227,7 +227,7 @@ public class Chapter1
         }
     }
 
-    private static int lg(int n)
+    public static int lg(int n)
     {
         // logarithm is undefined for negative numbers and 0
         if (n <= 0)
@@ -241,7 +241,7 @@ public class Chapter1
         return i;
     }
 
-    private static void exercise_1_1_14()
+    public static void exercise_1_1_14()
     {
         // Write a static method lg() that takes an int value N as argument and returns
         // the largest int not larger than the base-2 logarithm of N. Do not use Math.
@@ -251,7 +251,7 @@ public class Chapter1
         }
     }
 
-    private static int[] histogram(int[] a, int M)
+    public static int[] histogram(int[] a, int M)
     {
         int[] h = new int[M];
         for (int i : a)
@@ -263,7 +263,7 @@ public class Chapter1
         return h;
     }
 
-    private static void exercise_1_1_15()
+    public static void exercise_1_1_15()
     {
         // Write a static method histogram() that takes an array a[] of int values and
         // an integer M as arguments and returns an array of length M whose ith entry is
@@ -287,7 +287,7 @@ public class Chapter1
         return exR1(n - 3) + n + exR1(n - 2) + n;
     }
 
-    private static void exercise_1_1_16()
+    public static void exercise_1_1_16()
     {
         StdOut.printf("%s\n", exR1(6));
     }
@@ -312,7 +312,7 @@ public class Chapter1
         return mystery2(a * a, b / 2) * a;
     }
 
-    private static void exercise_1_1_18()
+    public static void exercise_1_1_18()
     {
         StdOut.printf("%s\n", mystery1(2, 25));
         StdOut.printf("%s\n", mystery1(3, 11));
@@ -323,7 +323,7 @@ public class Chapter1
         StdOut.printf("%s\n", mystery2(10, 4));
     }
 
-    private static long fibonacci1(int N)
+    public static long fibonacci1(int N)
     {
         if (N == 0)
             return 0;
@@ -332,7 +332,7 @@ public class Chapter1
         return fibonacci1(N - 1) + fibonacci1(N - 2);
     }
 
-    private static long fibonacci(int N)
+    public static long fibonacci(int N)
     {
         if (N == 0)
             return 0;
@@ -344,7 +344,7 @@ public class Chapter1
         return fibonacci(N - 1, savedResults) + fibonacci(N - 2, savedResults);
     }
 
-    private static long fibonacci(int N, long[] savedResults)
+    public static long fibonacci(int N, long[] savedResults)
     {
         if (N <= 1)
             return savedResults[N];
@@ -357,7 +357,7 @@ public class Chapter1
         return savedResults[N];
     }
 
-    private static long fibonacciNonRecursive(int N)
+    public static long fibonacciNonRecursive(int N)
     {
         long[] savedResults = new long[N + 1];
         if (N == 0)
@@ -371,21 +371,21 @@ public class Chapter1
         return savedResults[N];
     }
 
-    private static void exercise_1_1_19()
+    public static void exercise_1_1_19()
     {
         for (int N = 0; N < 90; N++)
             StdOut.println(N + " " + fibonacciNonRecursive(N));
     }
 
     // returns ln(n!)
-    private static double lnFactorial(int n)
+    public static double lnFactorial(int n)
     {
         if (n == 0 || n == 1)
             return 0;
         return Math.log(n) + lnFactorial(n - 1);
     }
 
-    private static void exercise_1_1_20()
+    public static void exercise_1_1_20()
     {
         StdOut.printf("%s\n", lnFactorial(0));
         StdOut.printf("%s\n", lnFactorial(1));
@@ -394,7 +394,7 @@ public class Chapter1
         StdOut.printf("%s\n", lnFactorial(12));
     }
 
-    private static void exercise_1_1_21()
+    public static void exercise_1_1_21()
     {
         String name;
         int v1;
@@ -411,17 +411,17 @@ public class Chapter1
         }
     }
 
-    private static int rank(int key, int[] a)
+    public static int rank(int key, int[] a)
     {
         return rank(key, a, false);
     }
 
-    private static int rank(int key, int[] a, boolean trace)
+    public static int rank(int key, int[] a, boolean trace)
     {
         return rank(key, a, 0, a.length - 1, trace ? 0 : -1);
     }
 
-    private static int rank(int key, int[] a, int lo, int hi, int depth)
+    public static int rank(int key, int[] a, int lo, int hi, int depth)
     {
         // Index of key in a[], if present, is not smaller than lo and not larger
         // than hi.
@@ -438,7 +438,7 @@ public class Chapter1
             return mid;
     }
 
-    private static void exercise_1_1_22()
+    public static void exercise_1_1_22()
     {
         // Write a version of BinarySearch that uses the recursive rank() given on page
         // 25 and traces the method calls. Each time the recursive method is called,
@@ -448,7 +448,7 @@ public class Chapter1
         rank(27, a);
     }
 
-    private static void binarySearch(String fileName, boolean printMatching)
+    public static void binarySearch(String fileName, boolean printMatching)
     {
         int[] whitelist = new In(fileName).readAllInts();
         Arrays.sort(whitelist);
@@ -468,7 +468,7 @@ public class Chapter1
         }
     }
 
-    private static void generateRandomInts()
+    public static void generateRandomInts()
     {
         Random rd = new Random();
         int maxValue = 100000;
@@ -479,7 +479,7 @@ public class Chapter1
         }
     }
 
-    private static void exercise_1_1_23(String[] args)
+    public static void exercise_1_1_23(String[] args)
     {
         // Add to the BinarySearch test client the ability to respond to a second
         // argument: + to print numbers from standard input that are not in the
@@ -498,7 +498,7 @@ public class Chapter1
         return gcd(q, r, trace);
     }
 
-    private static void exercise_1_1_24(String[] args)
+    public static void exercise_1_1_24(String[] args)
     {
         // Give the sequence of values of p and q that are computed when Euclid’s
         // algorithm is used to compute the greatest common divisor of 105 and 24.
@@ -512,7 +512,7 @@ public class Chapter1
         StdOut.printf("gcd(%s, %s) = %s\n", p, q, result);
     }
 
-    private static double binomial(int N, int k, double p)
+    public static double binomial(int N, int k, double p)
     {
         double[][] savedResults = new double[N + 1][k + 1];
         for (int i = 0; i <= N; i++)
@@ -523,7 +523,7 @@ public class Chapter1
         return binomial(N, k, p, savedResults);
     }
 
-    private static double binomial(int N, int k, double p, double[][] savedResults)
+    public static double binomial(int N, int k, double p, double[][] savedResults)
     {
         if (N < 0 || k < 0)
             return 0.0;
@@ -538,13 +538,13 @@ public class Chapter1
         return result;
     }
 
-    private static void exercise_1_1_27()
+    public static void exercise_1_1_27()
     {
         double result = binomial(100, 20, 0.1);
         StdOut.printf("result=%s", result);
     }
 
-    private static void exercise_1_1_28()
+    public static void exercise_1_1_28()
     {
         // remove duplicates from a sorted array and print the resulting array
         int maxValue = 100;
@@ -576,12 +576,12 @@ public class Chapter1
         }
     }
 
-    private static int countSmaller(int k, int[] arr)
+    public static int countSmaller(int k, int[] arr)
     {
         return countSmaller(k, arr, 0, arr.length - 1);
     }
 
-    private static int countSmaller(int k, int[] arr, int lo, int hi)
+    public static int countSmaller(int k, int[] arr, int lo, int hi)
     {
         if (lo > hi)
         {
@@ -604,7 +604,7 @@ public class Chapter1
         }
     }
 
-    private static int countEquals(int k, int[] arr)
+    public static int countEquals(int k, int[] arr)
     {
         int i = rank(k, arr);
         if (i == -1)
@@ -625,7 +625,7 @@ public class Chapter1
         return end - start - 1;
     }
 
-    private static void exercise_1_1_29()
+    public static void exercise_1_1_29()
     {
         // Equal keys. Add to BinarySearch a static method rank() that takes a key and
         // a sorted array of int values (some of which may be equal) as arguments and
@@ -662,12 +662,12 @@ public class Chapter1
         StdOut.printf("# equals -1:%s\n", countEquals(-1, a));
     }
 
-    private static boolean relativePrime(int v1, int v2)
+    public static boolean relativePrime(int v1, int v2)
     {
         return gcd(v1, v2, false) == 1;
     }
 
-    private static void exercise_1_1_30()
+    public static void exercise_1_1_30()
     {
         int n = 30;
         boolean[][] arr = new boolean[n][n];
@@ -694,7 +694,7 @@ public class Chapter1
         }
     }
 
-    private static void exercise_1_1_31()
+    public static void exercise_1_1_31()
     {
         int SIZE = 1000;
         int r = 400;
@@ -728,5 +728,120 @@ public class Chapter1
         }
 
         StdDraw.show();
+    }
+
+    public static void exercise_1_1_32()
+    {
+        int N = 17;
+        double l = 0;
+        double r = 100;
+
+        double val;
+        int[] buckets = new int[N];
+        int bucketIndex;
+        double intervalLenght = (r - l) / N;
+
+        for (int i = 0; i < 1000; i++)
+        {
+            val = StdRandom.uniformDouble(l, r);
+            bucketIndex = (int) ((val - l) / intervalLenght);
+            buckets[bucketIndex]++;
+        }
+
+        int maxHeight = buckets[0];
+        for (int i = 0; i < buckets.length; i++)
+        {
+            if (buckets[i] > maxHeight)
+                maxHeight = buckets[i];
+        }
+
+        int CANVAS_SIZE = 1600;
+        StdDraw.setCanvasSize(CANVAS_SIZE, CANVAS_SIZE);
+        StdDraw.setYscale(-100, 1000);
+        StdDraw.setXscale(-100, 1000);
+        StdDraw.enableDoubleBuffering();
+
+        StdDraw.setPenRadius(0.01);
+        StdDraw.line(0, 0, 900, 0);
+        StdDraw.line(0, 0, 0, 900);
+
+        double height;
+        double width = 880.0 / N - 5;
+
+        for (int i = 0; i < buckets.length; i++)
+        {
+            height = (buckets[i] / (double) maxHeight) * 880;
+            double x = (i + 1) * width - 10;
+            double y = height / 2;
+            StdDraw.setPenColor(StdDraw.BOOK_BLUE);
+            StdDraw.filledRectangle(x, y, width / 2 - 10, y);
+            StdDraw.setPenColor();
+            StdDraw.textLeft(x - 10, -20, String.format("%s", buckets[i]));
+        }
+
+        StdDraw.show();
+    }
+
+    public static void exercise_1_1_33()
+    {
+        double[][] a =
+        {
+            { 1, 1, 1 },
+            { 2, 2, 2 },
+            { 3, 2, 1 },
+            { -1, -1, -1 },
+            { 0, 0, 1 }
+
+        };
+
+        double[][] b =
+        {
+            { 1, 2, 3, 4 },
+            { 1, 2, 3, 4 },
+            { 1, 2, 3, 4 }
+        };
+
+        double[] x =
+        { 1, 2, 3, 4, 5 };
+
+        double[] y =
+        { -1, 0, 1, 2, 3 };
+
+        double[][] r;
+
+        StdOut.printf("dot=%s\n", Matrix.dot(x, y));
+
+        r = Matrix.mult(a, b);
+        for (double[] d : r)
+        {
+            for (double v : d)
+                StdOut.printf("%3.0f ", v);
+            StdOut.println();
+        }
+
+        x = new double[]
+        { 1, 2, 3 };
+        y = Matrix.mult(a, x);
+        for (double d : y)
+        {
+            StdOut.printf("%3.0f \n", d);
+        }
+
+        x = new double[]
+        { 1, 2, 3 };
+        y = Matrix.mult(x, b);
+        for (double d : y)
+        {
+            StdOut.printf("%3.0f ", d);
+        }
+        StdOut.println();
+
+        r = Matrix.transpose(b);
+        for (double[] d : r)
+        {
+            for (double v : d)
+                StdOut.printf("%3.0f ", v);
+            StdOut.println();
+        }
     }
 }
