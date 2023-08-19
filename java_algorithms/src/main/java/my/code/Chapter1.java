@@ -16,7 +16,7 @@ public class Chapter1
     public static void main(String[] args)
     {
         StdOut.println(">>>>>>>>> Start Execution");
-        exercise_1_1_35();
+        exercise_1_1_37();
         StdOut.println(">>>>>>>>> End Execution");
     }
 
@@ -884,5 +884,87 @@ public class Chapter1
         }
 
         StdOut.printf("%s\n", equalsTo3DecimalPlaces ? "Match" : "NOT Match");
+    }
+
+    public static void shuffle(int[] a, boolean badShuffle)
+    {
+        int temp;
+        int r;
+        for (int i = 0; i < a.length - 1; i++)
+        {
+            if (badShuffle)
+            {
+                // Exchange a[i] with random element in a[0..n-1] (instead of a[i,n-1])
+                r = StdRandom.uniformInt(0, a.length);
+            }
+            else
+            {
+                // Exchange a[i] with random element in a[i..n-1]
+                r = StdRandom.uniformInt(i, a.length);
+            }
+
+            temp = a[r];
+            a[r] = a[i];
+            a[i] = temp;
+        }
+
+    }
+
+    public static void goodShuffle(int[] a)
+    {
+        shuffle(a, false);
+    }
+
+    public static void badShuffle(int[] a)
+    {
+        shuffle(a, true);
+    }
+
+    public static void shuffleTest(boolean useBadShuffle)
+    {
+        // Empirical shuffle check. Run computational experiments to check that our
+        // shuffling code on page 32 works as advertised. Write a program ShuffleTest
+        // that takes command-line arguments M and N, does N shuffles of an array of
+        // size M that is initialized with a[i] = i before each shuffle, and prints an
+        // M-by-M table such that row i gives the number of times i wound up in position
+        // j for all j. All entries in the array should be close to N/M.
+        int M = 10;
+        int[] a = new int[M];
+        int[][] r = new int[M][M];
+        int N = 100000;
+
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < a.length; j++)
+                a[j] = j;
+            if (useBadShuffle)
+                badShuffle(a);
+            else
+                goodShuffle(a);
+            for (int j = 0; j < a.length; j++)
+            {
+                r[a[j]][j]++;
+            }
+        }
+
+        for (int[] i : r)
+        {
+            for (int v : i)
+            {
+                StdOut.printf("%5s ", v);
+            }
+            StdOut.println();
+        }
+
+    }
+
+    public static void exercise_1_1_36()
+    {
+        shuffleTest(false);
+    }
+
+    public static void exercise_1_1_37()
+    {
+        shuffleTest(true);
     }
 }
