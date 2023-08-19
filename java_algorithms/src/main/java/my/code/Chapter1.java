@@ -22,7 +22,7 @@ public class Chapter1
         StdOut.printf(">>>>>>>>> CLASSPATH:%s\n", System.getProperty("java.class.path"));
         long start = System.currentTimeMillis();
 
-        exercise_1_1_38(args[0]);
+        exercise_1_1_39();
 
         long end = System.currentTimeMillis();
         StdOut.printf(">>>>>>>>> total time in milliseconds:%s\n", end - start);
@@ -1000,6 +1000,81 @@ public class Chapter1
             int key = StdIn.readInt();
             // rank(key, whitelist);
             bruteForceSearch(key, whitelist);
+        }
+    }
+
+    public static int appearsInBoth(int[] arr1, int[] arr2)
+    {
+        int sum = 0;
+        Arrays.sort(arr1);
+        Arrays.sort(arr2);
+        int i1 = 0, i2 = 0;
+
+        try
+        {
+            while (true)
+            {
+                while (arr1[i1] < arr2[i2])
+                {
+                    i1++;
+                }
+
+                while (arr2[i2] < arr1[i1])
+                {
+                    i2++;
+                }
+
+                if (arr1[i1] == arr2[i2])
+                {
+                    sum++;
+
+                    while (arr1[i1] == arr2[i2])
+                    {
+                        i1++;
+                    }
+                }
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            // done
+        }
+
+        return sum;
+    }
+
+    public static void exercise_1_1_39()
+    {
+        // Random matches. Write a BinarySearch client that takes an int value T as
+        // command-line argument and runs T trials of the following experiment for
+        // N =10^3, 10^4, 10^5, and 10^6: generate two arrays of N randomly generated
+        // positive six-digit int values, and find the number of values that appear in
+        // both arrays. Print a table giving the average value of this quantity over the
+        // T trials for each value of N.
+        int T = 100;
+        int N;
+        int[] n =
+        { 1000, 10000, 100000, 1000000 };
+
+        for (int i = 0; i < n.length; i++)
+        {
+            N = n[i];
+            int[] arr1 = new int[N];
+            int[] arr2 = new int[N];
+
+            int sum = 0;
+            for (int t = 0; t < T; t++)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    arr1[j] = StdRandom.uniformInt(100000, 1000000);
+                    arr2[j] = StdRandom.uniformInt(100000, 1000000);
+                }
+
+                sum += appearsInBoth(arr1, arr2);
+            }
+
+            StdOut.printf("N=%s Avg:%.2f\n", N, (double) sum / T);
         }
     }
 }
