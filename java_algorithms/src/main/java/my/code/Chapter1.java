@@ -16,7 +16,16 @@ public class Chapter1
     public static void main(String[] args)
     {
         StdOut.println(">>>>>>>>> Start Execution");
-        exercise_1_1_37();
+        StdOut.printf(">>>>>>>>> Working dir:%s\n", System.getProperty("user.dir"));
+        StdOut.printf(">>>>>>>>> Java Version:%s\n", System.getProperty("java.version"));
+        StdOut.printf(">>>>>>>>> JAVA_HOME:%s\n", System.getProperty("java.home"));
+        StdOut.printf(">>>>>>>>> CLASSPATH:%s\n", System.getProperty("java.class.path"));
+        long start = System.currentTimeMillis();
+
+        exercise_1_1_38(args[0]);
+
+        long end = System.currentTimeMillis();
+        StdOut.printf(">>>>>>>>> total time in milliseconds:%s\n", end - start);
         StdOut.println(">>>>>>>>> End Execution");
     }
 
@@ -421,6 +430,7 @@ public class Chapter1
         return rank(key, a, 0, a.length - 1, trace ? 0 : -1);
     }
 
+    // assumes the array a is sorted
     public static int rank(int key, int[] a, int lo, int hi, int depth)
     {
         // Index of key in a[], if present, is not smaller than lo and not larger
@@ -966,5 +976,30 @@ public class Chapter1
     public static void exercise_1_1_37()
     {
         shuffleTest(true);
+    }
+
+    public static int bruteForceSearch(int k, int[] a)
+    {
+        for (int i = 0; i < a.length; i++)
+            if (a[i] == k)
+                return i;
+        return -1;
+    }
+
+    public static void exercise_1_1_38(String fileName)
+    {
+        // Binary search versus brute-force search. Write a program BruteForceSearch
+        // that uses the brute-force search method given on page 48 and compare its
+        // running time on your computer with that of BinarySearch for largeW.txt and
+        // largeT.txt.
+        int[] whitelist = new In(fileName).readAllInts();
+        Arrays.sort(whitelist);
+        StdOut.printf("Reading input...\n");
+        while (!StdIn.isEmpty())
+        {
+            int key = StdIn.readInt();
+            // rank(key, whitelist);
+            bruteForceSearch(key, whitelist);
+        }
     }
 }
