@@ -9,7 +9,15 @@
         - basic libs/collections
     - Multithreading
     - Async/Await
+3- Technologies:
     - REST Api development
+    - Redis
+    - Nginx
+    - React/Flask/Express (JS frameworks)
+    - SQL
+        - Postgres
+        - MySQL
+        - MongoDB
 
 4- Computer Science
     - Number representation:
@@ -21,7 +29,6 @@
     - Ansible
 
 6- Microservices
-
 
 7- OS/Linux
 
