@@ -1,0 +1,48 @@
+1- LeetCode
+
+2- System Desing
+
+3- Java/JavaScript/TypeScript/Python/C++/C#/Go/
+    - Common tasks
+        - string operations
+        - types: double float etc
+        - basic libs/collections
+    - Multithreading
+    - Async/Await
+
+4- Computer Science
+    - Number representation:
+        - 2's complement
+
+5- DevOps
+    - Docker
+    - Kubernetes
+    - Ansible
+
+6- Microservices
+
+
+7- OS/Linux
+
+8- Scripting/Bash
+
+
+Interview:
+
+Source 1) LeetCode:
+    https://leetcode.com/
+
+    I solved some Medium and Hard questions here (I may have solved around 25 questions).
+    I've found some of the Hard questions too extreme.
+    Even though I could solve most of them, I don't think they make good interview questions.
+
+Source 2) Elements of Programming Interviews:
+    https://www.amazon.com/Elements-Programming-Interviews-Insiders-Guide/dp/1479274836
+    This book mostly has programming questions, but it also have design questions (15 of them).
+
+Source 3) System Design Interview - Volume 1 and Volume 2
+    https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF
+    https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119
+
+Source 4) Grokking the System Design Interview: This is paid material, but it is worth it.
+    https://www.educative.io/courses/grokking-the-system-design-interview
