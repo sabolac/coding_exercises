@@ -1,5 +1,10 @@
 package my.code;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.stream.IntStream;
+
+import edu.princeton.cs.algs4.Counter;
 import edu.princeton.cs.algs4.Interval1D;
 import edu.princeton.cs.algs4.Interval2D;
 import edu.princeton.cs.algs4.Point2D;
@@ -18,7 +23,7 @@ public class Section12
         StdOut.printf(">>>>>>>>> CLASSPATH:%s\n", System.getProperty("java.class.path"));
         long start = System.currentTimeMillis();
 
-        exercise_1_2_3();
+        exercise_1_2_12();
 
         long end = System.currentTimeMillis();
         StdOut.printf(">>>>>>>>> total time in milliseconds:%s\n", end - start);
@@ -183,4 +188,176 @@ public class Section12
         StdOut.printf("# of pairs that contains: %s\n", containsCount);
         StdDraw.show();
     }
+
+    public static void exercise_1_2_4()
+    {
+        // What does the following code fragment print?
+        // Answer: prints:
+        // world
+        // hello
+        String string1 = "hello";
+        String string2 = string1;
+        string1 = "world";
+        StdOut.println(string1);
+        StdOut.println(string2);
+    }
+
+    public static void exercise_1_2_5()
+    {
+        // What does the following code fragment print?
+        // Answer: "Hello World", Strings in Java are immutable, thus calling a method
+        // does not change the object itself. Rather it returns a new String object
+        String s = "Hello World";
+        s.toUpperCase();
+        s.substring(6, 11);
+        StdOut.println(s);
+    }
+
+    public static void exercise_1_2_6()
+    {
+        // A string s is a circular rotation of a string t if it matches when the
+        // characters are circularly shifted by any number of positions; e.g., ACTGACG
+        // is a circular shift of TGACGAC, and vice versa. Detecting this condition is
+        // important in the study of genomic sequences. Write a program that checks
+        // whether two given strings s and t are circular shifts of one another.
+        String s = "ACTGACG";
+        String t = "GACGACT";
+
+        if (s.length() == t.length() && t.concat(t).indexOf(s) != -1)
+        {
+            StdOut.printf("%s is a circular shift of %s\n", s, t);
+        }
+        else
+        {
+            StdOut.printf("%s is NOT a circular shift of %s\n", s, t);
+        }
+    }
+
+    // reverses the given String
+    public static String mystery(String s)
+    {
+        int N = s.length();
+        if (N <= 1)
+            return s;
+        String a = s.substring(0, N / 2);
+        String b = s.substring(N / 2, N);
+        return mystery(b) + mystery(a);
+    }
+
+    public static void exercise_1_2_7()
+    {
+        // What does the following recursive function mystery return?
+        String s = "123456789";
+        StdOut.printf("%s --> %s\n", s, mystery(s));
+    }
+
+    public static int rank(int key, int[] a, Counter totalKeysExamined)
+    { // Array must be sorted.
+        int lo = 0;
+        int hi = a.length - 1;
+        while (lo <= hi)
+        { // Key is in a[lo..hi] or not present.
+            totalKeysExamined.increment();
+            int mid = lo + (hi - lo) / 2;
+            if (key < a[mid])
+                hi = mid - 1;
+            else if (key > a[mid])
+                lo = mid + 1;
+            else
+                return mid;
+        }
+        return -1;
+    }
+
+    public static void exercise_1_2_9()
+    {
+        // Instrument BinarySearch (page 47) to use a Counter to count the total number
+        // of keys examined during all searches and then print the total after all
+        // searches are complete. Hint : Create a Counter in main() and pass it as an
+        // argument to rank().
+        Counter c = new Counter("Total Keys Examined");
+        int N = 10000000;
+        int[] a = IntStream.range(0, N).toArray();
+        for (int i = 0; i < N; i++)
+        {
+            rank(StdRandom.uniformInt(N), a, c);
+        }
+        StdOut.printf("%s\n", c.toString());
+    }
+
+    public static boolean isLeapYear(int year)
+    {
+        // leap years: divisible by 400, or by 4 but not by 100
+        return (year % 400 == 0 || year % 100 != 0 && year % 4 == 0);
+
+    }
+
+    public static int[] daysOfMonths(int year)
+    {
+        // 1 January 31 days
+        // 2 February 28 days (29 if leap year)
+        // 3 March 31 days
+        // 4 April 30 days
+        // 5 May 31 days
+        // 6 June 30 days
+        // 7 July 31 days
+        // 8 August 31 days
+        // 9 September 30 days
+        // 10 October 31 days
+        // 11 November 30 days
+        // 12 December 31 days
+        int[] d = new int[12];
+        d[0] = d[2] = d[4] = d[6] = d[7] = d[9] = d[11] = 31;
+        d[1] = 28 + (isLeapYear(year) ? 1 : 0);
+        d[3] = d[5] = d[8] = d[10] = 30;
+
+        return d;
+
+    }
+
+    public static String dayOfTheWeek(int d, int m, int y) throws Exception
+    {
+        if (y < 2000)
+            throw new Exception("year should be >= 2000");
+
+        LocalDate ld = LocalDate.of(y, m, d);
+        LocalDate ld_2000 = LocalDate.of(2000, 1, 1);
+        StdOut.printf("%s is a %s\n", ld_2000, ld_2000.getDayOfWeek());
+        StdOut.printf("%s is %s days from %s\n", ld, ChronoUnit.DAYS.between(ld_2000, ld), ld_2000);
+        StdOut.printf("%s is a %s\n", ld, ld.getDayOfWeek());
+
+        int dy = y - 2000;
+        int daysFrom2000 = dy * 365;
+        dy--;
+        // add 1 day for each leap year since 2000
+        daysFrom2000 += dy / 4 - dy / 100 + dy / 400;
+
+        int[] dom = daysOfMonths(y);
+        for (int i = 0; i < m - 1; i++) // do not add the current month since it is not complete yet
+            daysFrom2000 += dom[i];
+        daysFrom2000 += d - (y == 2000 ? 1 : 0); // add days, sub 1 for year 2000
+
+        // 1/1/2000 was a Saturday, so start with Saturday
+        String[] daysOfWeek =
+        { "SATURDAY", "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY" };
+
+        String dayOfWeek = daysOfWeek[daysFrom2000 % 7];
+        StdOut.printf("%s is %s days from %s\n", ld, daysFrom2000, ld_2000);
+        StdOut.printf("%s is a %s\n", ld, dayOfWeek);
+
+        return dayOfWeek;
+    }
+
+    public static void exercise_1_2_12()
+    {
+        try
+        {
+            dayOfTheWeek(12, 3, 3541);
+        }
+        catch (Exception e)
+        {
+            StdOut.printf(e.toString());
+        }
+    }
+
 }

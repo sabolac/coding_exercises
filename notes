@@ -35,8 +35,19 @@
 
 8- Scripting/Bash
 
+9- Networking
+    - configuration
+    - troubleshooting
+    - TCP/IP fundamentals
+        - routing arp brigde etc
+
+10- Projects (youtube examples)
+    - Develop projects in multiple languages
+
 
 Interview:
+
+https://orrsella.gitbooks.io/soft-eng-interview-prep/content/
 
 Source 1) LeetCode:
     https://leetcode.com/
