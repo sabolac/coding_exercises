@@ -1,7 +1,12 @@
 package my.code;
 
+import edu.princeton.cs.algs4.Date;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class Section13
 {
@@ -14,7 +19,14 @@ public class Section13
         StdOut.printf(">>>>>>>>> CLASSPATH:%s\n", System.getProperty("java.class.path"));
         long start = System.currentTimeMillis();
 
-        exercise_1_3_11();
+        // for (int i = 0; i < 100; i++)
+        // {
+        // StdOut.printf("%s/%s/%s\n", StdRandom.uniformInt(1, 13),
+        // StdRandom.uniformInt(1, 32),
+        // StdRandom.uniformInt(1900, 3000));
+        // }
+
+        exercise_1_3_16();
 
         long end = System.currentTimeMillis();
         StdOut.printf(">>>>>>>>> total time in milliseconds:%s\n", end - start);
@@ -209,4 +221,47 @@ public class Section13
         StdOut.printf("Postfix: %s = %s\n", postfixExpression, evaluatePostfix(postfixExpression));
     }
 
+    public static void exercise_1_3_15()
+    {
+        Queue<String> q = new Queue<>();
+        int k = 10;
+        int i = k;
+        while (!StdIn.isEmpty() && i-- > 0)
+        {
+            q.enqueue(StdIn.readString());
+        }
+
+        while (!StdIn.isEmpty())
+        {
+            q.dequeue();
+            q.enqueue(StdIn.readString());
+        }
+
+        StdOut.printf("%sth from last item is: '%s'\n", k, q.dequeue());
+    }
+
+    public static void exercise_1_3_16()
+    {
+        for (Date d : readDates())
+        {
+            StdOut.printf("%s\n", d.toString());
+        }
+    }
+
+    public static Date[] readDates()
+    {
+        Queue<Date> q = new Queue<Date>();
+        while (!StdIn.isEmpty())
+        {
+            q.enqueue(new Date(StdIn.readString()));
+        }
+
+        int n = q.size();
+        Date[] arr = new Date[n];
+        for (int i = 0; i < n; i++)
+        {
+            arr[i] = q.dequeue();
+        }
+        return arr;
+    }
 }
