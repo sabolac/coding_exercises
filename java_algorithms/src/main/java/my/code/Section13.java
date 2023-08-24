@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Section13
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
         StdOut.println(">>>>>>>>> Start Execution");
         StdOut.printf(">>>>>>>>> Working dir:%s\n", System.getProperty("user.dir"));
@@ -14,7 +14,7 @@ public class Section13
         StdOut.printf(">>>>>>>>> CLASSPATH:%s\n", System.getProperty("java.class.path"));
         long start = System.currentTimeMillis();
 
-        exercise_1_3_4();
+        exercise_1_3_9();
 
         long end = System.currentTimeMillis();
         StdOut.printf(">>>>>>>>> total time in milliseconds:%s\n", end - start);
@@ -74,4 +74,41 @@ public class Section13
 
     }
 
+    public static void exercise_1_3_9() throws Exception
+    {
+        // Note: the expression should have spaces in between each term and parenthesis
+        String expression = "1 + 2 ) * 3 - 4 ) * 5 - 6 ) ) )";
+        Stack<String> s = new Stack<>();
+
+        String[] tokens = expression.split("\\s");
+        String op, v1, v2;
+        for (int i = 0; i < tokens.length; i++)
+        {
+            String token = tokens[i];
+            if (token.equals(")"))
+            {
+                v2 = s.pop();
+                op = s.pop();
+                v1 = s.pop();
+                s.push(String.format("( %s %s %s )", v1, op, v2));
+            }
+            else if (token.matches("\\d+|[/\\*\\-\\+]"))
+            {
+                s.push(token);
+            }
+            else
+            {
+                throw new Exception(String.format("token:'%s' in the expression is invalid", token));
+
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (String x : s)
+        {
+            sb.insert(0, x);
+        }
+
+        StdOut.printf("Infix form: %s\n", sb.toString());
+    }
 }
