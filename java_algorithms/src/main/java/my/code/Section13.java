@@ -14,7 +14,7 @@ public class Section13
         StdOut.printf(">>>>>>>>> CLASSPATH:%s\n", System.getProperty("java.class.path"));
         long start = System.currentTimeMillis();
 
-        exercise_1_3_9();
+        exercise_1_3_11();
 
         long end = System.currentTimeMillis();
         StdOut.printf(">>>>>>>>> total time in milliseconds:%s\n", end - start);
@@ -111,4 +111,102 @@ public class Section13
 
         StdOut.printf("Infix form: %s\n", sb.toString());
     }
+
+    public static String infixToPostfix(String expression)
+    {
+        // Note: assumes the expression is fully parenthesized, thus no handling of
+        // precedence rules is necessary
+        Stack<String> s = new Stack<>();
+
+        String[] tokens = expression.split("\\s");
+        String op, v1, v2;
+        for (String token : tokens)
+        {
+            if (token.equals("("))
+                continue;
+            if (token.equals(")"))
+            {
+                v2 = s.pop();
+                op = s.pop();
+                v1 = s.pop();
+                s.push(String.format("%s %s %s", v1, v2, op));
+            }
+            else if (token.matches("\\d+|[/\\*\\-\\+]"))
+            {
+                s.push(token);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (!s.isEmpty())
+        {
+            sb.insert(0, s.pop());
+        }
+        return sb.toString();
+    }
+
+    public static void exercise_1_3_10()
+    {
+        String infixExpression;
+        String postfixExpression;
+
+        infixExpression = "( ( 1 + 22 ) * ( ( 3 - 444 ) * ( 5 - 6 ) ) )";
+        postfixExpression = infixToPostfix(infixExpression);
+        StdOut.printf("Postfix: %s\n", postfixExpression);
+    }
+
+    public static double evaluatePostfix(String postfixExpression) throws Exception
+    {
+        String[] tokens = postfixExpression.split("\\s");
+        Stack<Object> s = new Stack<>();
+        double v1, v2;
+        for (String token : tokens)
+        {
+            if (token.matches("[/\\*\\+\\-]"))
+            {
+                v2 = (double) s.pop();
+                v1 = (double) s.pop();
+                switch (token)
+                {
+                    case "/":
+                        s.push(v1 / v2);
+                        break;
+                    case "*":
+                        s.push(v1 * v2);
+                        break;
+                    case "+":
+                        s.push(v1 + v2);
+                        break;
+                    case "-":
+                        s.push(v1 - v2);
+                        break;
+
+                }
+            }
+            else if (token.matches("\\-?\\d+(\\.?\\d+)?"))
+            {
+                s.push(Double.parseDouble(token));
+            }
+        }
+
+        if (s.size() != 1)
+        {
+            for (Object o : s)
+            {
+                StdOut.println(o.toString());
+            }
+            throw new Exception("invalid postfix expression");
+        }
+
+        return (double) s.pop();
+    }
+
+    public static void exercise_1_3_11() throws Exception
+    {
+        String postfixExpression;
+
+        postfixExpression = "1 22 + 3 444 - 5 6 - * *";
+        StdOut.printf("Postfix: %s = %s\n", postfixExpression, evaluatePostfix(postfixExpression));
+    }
+
 }

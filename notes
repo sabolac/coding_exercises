@@ -7,8 +7,11 @@
         - string operations
         - types: double float etc
         - basic libs/collections
-    - Multithreading
+    - Multithreading, synchronization primites locks semaphore etc
     - Async/Await
+    - JavaScript: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+    - Html/CSS/Web: https://developer.mozilla.org/en-US/docs/Learn
+    - https://developer.mozilla.org/en-US/play
 
 3- Technologies:
     - REST Api development
