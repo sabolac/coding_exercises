@@ -1,7 +1,5 @@
 package my.code;
 
-import edu.princeton.cs.algs4.StdDraw;
-
 public class VisualCounter
 {
 
