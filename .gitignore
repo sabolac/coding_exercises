@@ -31,3 +31,6 @@ replay_pid*
 # https://algs4.cs.princeton.edu/11model/largeAllowlist.txt --> largeW.txt
 largeT.txt
 largeW.txt
+.vscode/launch.json
+.vscode/settings.json
+scratch
