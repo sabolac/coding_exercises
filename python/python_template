@@ -7,13 +7,16 @@
 import pprint
 pp = pprint.pprint
 
+
 def main():
     data = []
     process(data)
+
 
 def process(data):
     pp(">>> START")
     pp(data)
     pp(">>> END")
+
 
 main()

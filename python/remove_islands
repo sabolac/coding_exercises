@@ -7,6 +7,7 @@
 import pprint
 pp = pprint.pprint
 
+
 def main():
     m = [
         [0, 0, 1, 0, 1, 1, 0, 0, 0, 1],
@@ -24,7 +25,18 @@ def main():
     remove_islands(m)
 
 
+def is_rectangular(m):
+    # if all rows are of the same length say x, the comprehension below will return
+    # a set of size one containing x
+    return len({len(row) for row in m}) == 1
+
+
 def remove_islands(m):
+    # make sure m is rectanguler
+    if not is_rectangular:
+        raise ValueError(
+            "the specified parameter 'm' is invalid: expecting a rectangular array")
+
     CONNECTED = 2
     ROWS = len(m)
     COLS = len(m[0])
@@ -35,32 +47,32 @@ def remove_islands(m):
         for j in range(COLS):
             if m[i][j] == 1:
                 m[i][j] = CONNECTED
-                s.append((i,j))
+                s.append((i, j))
 
     # scan first and last column and mark each 1 as connected
     for j in [0, COLS-1]:
         for i in range(ROWS):
             if m[i][j] == 1:
                 m[i][j] = CONNECTED
-                s.append((i,j))
+                s.append((i, j))
 
     while len(s) > 0:
-        r,c = s.pop()
+        r, c = s.pop()
         # check neighbors (left, right, up, down) and if any of them is connected
         #  mark this one m[i,j] connected as well
 
         # do not go out of the map when adding/subtracing 1 below so use max/min as needed (no harm in adding the
         # current one itself as it is already marked as CONNECTED)
         neighbors = []
-        neighbors.append((r,max(c-1,0))) # left
-        neighbors.append((r,min(c+1, COLS-1))) # right
-        neighbors.append((max(r-1,0),c)) # up
-        neighbors.append((min(r+1,ROWS-1),c)) # down
+        neighbors.append((r, max(c-1, 0)))  # left
+        neighbors.append((r, min(c+1, COLS-1)))  # right
+        neighbors.append((max(r-1, 0), c))  # up
+        neighbors.append((min(r+1, ROWS-1), c))  # down
 
-        for i,j in neighbors:
-            if m[i][j] ==  1:
+        for i, j in neighbors:
+            if m[i][j] == 1:
                 m[i][j] = CONNECTED
-                s.append((i,j))
+                s.append((i, j))
 
     # sink the remaining 1's (not connected ones) by marking them 0
     # and mark all connected cells (2) as 1 as in the original
@@ -68,7 +80,8 @@ def remove_islands(m):
     for i in range(ROWS):
         for j in range(COLS):
             if m[i][j] > 0:
-                m[i][j] -=1
+                m[i][j] -= 1
     pp(m)
+
 
 main()
