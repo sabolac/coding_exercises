@@ -4,7 +4,7 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=missing-function-docstring
 # pylint: disable=missing-module-docstring
-from pprint import pprint as pp
+from pprint import pp
 
 
 def main():

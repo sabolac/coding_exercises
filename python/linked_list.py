@@ -1,4 +1,4 @@
-from pprint import pprint as pp
+from pprint import pp
 
 
 class LinkedList:
