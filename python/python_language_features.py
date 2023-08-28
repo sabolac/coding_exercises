@@ -180,8 +180,9 @@ def text_handling():
 
     # In addition to indexing, slicing is also supported. While indexing is used
     # to obtain individual characters, slicing allows you to obtain substrings.
-    # Slice indices have useful defaults; an omitted first index defaults to zero,
-    # an omitted second index defaults to the size of the string being sliced.
+    # Slice indices have useful defaults; an omitted first index defaults to
+    # zero, an omitted second index defaults to the size of the string being
+    # sliced.
     #  +---+---+---+---+---+---+
     #  | P | y | t | h | o | n |
     #  +---+---+---+---+---+---+
@@ -297,6 +298,155 @@ def list_operations():
     ]
     assert len(x) == 2
 
+    # Extend the list by appending all the items from the iterable. Equivalent
+    # to a[len(a):] = iterable.
+    list1 = [1, 2, 3]
+    list1.extend(range(4, 10))
+    print(list1)
+    assert list1 == [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    # Insert an item at a given position. The first argument is the index of the
+    # element before which to insert, so a.insert(0, x) inserts at the front of
+    # the list, and a.insert(len(a), x) is equivalent to a.append(x).
+    list1 = [1, 2, 3]
+    list1.insert(0, 0)
+    assert list1 == [0, 1, 2, 3]
+    list1.insert(2, 9)
+    assert list1 == [0, 1, 9, 2, 3]
+
+    # Remove the first item from the list whose value is equal to x. It raises a
+    # ValueError if there is no such item.
+    list1 = [1, 2, 3, 2]
+    list1.remove(2)
+    assert list1 == [1, 3, 2]
+
+    list1 = [1, 2, 3, 4, 5]
+    assert list1.pop() == 5
+    assert list1.pop() == 4
+    assert list1.pop(1) == 2
+    assert list1.pop(0) == 1
+    assert list1.pop() == 3
+    assert list1 == []
+
+    # Remove all items from the list. Equivalent to del a[:].
+    list1 = [1, 2, 3]
+    list1.clear()
+    assert list1 == []
+
+    list1 = [1, 2, 3]
+    del list1[:]
+    assert list1 == []
+
+    # Return zero-based index in the list of the first item whose value is equal
+    # to x. Raises a ValueError if there is no such item. The optional arguments
+    # start and end are interpreted as in the slice notation and are used to
+    # limit the search to a particular subsequence of the list. The returned
+    # index is computed relative to the beginning of the full sequence rather
+    # than the start argument. list.index(x[, start[, end]])
+    list1 = [1, 2, 3, 2, 3, 5]
+    assert list1.index(1) == 0
+    assert list1.index(2) == 1
+    assert list1.index(3) == 2
+    assert list1.index(3, 3) == 4
+    assert list1.index(3, 4, 5) == 4
+
+    # Return the number of times x appears in the list. list.count(x)
+    list1 = [1, 2, 3, 2, 3, 5, 2, 2, 2]
+    assert list1.count(2) == 5
+
+    # Sort the items of the list in place (the arguments can be used for sort
+    # customization, see sorted() for their explanation).
+    # list.sort(*, key=None, reverse=False)
+    list1 = [3, 7, 2, 5, 9, 1, 4, 2]
+    list1.sort()
+    assert list1 == [1, 2, 2, 3, 4, 5, 7, 9]
+    list1.sort(reverse=True)
+    assert list1 == [9, 7, 5, 4, 3, 2, 2, 1]
+
+    # Reverse the elements of the list in place. list.reverse()
+    list1 = [1, 2, 3, 2, 3, 5]
+    list1.reverse()
+    assert list1 == [5, 3, 2, 3, 2, 1]
+
+    # Return a shallow copy of the list. Equivalent to a[:]. list.copy()
+    list1 = [1, 2, 3]
+    list2 = list1.copy()
+    assert list1 == list2
+    list2[2] = 9
+    assert list1 != list2
+    assert list1 == [1, 2, 3]
+    assert list2 == [1, 2, 9]
+    list2 = list1[:]
+    assert list1 == list2
+
+    # The list methods make it very easy to use a list as a stack, where the
+    # last element added is the first element retrieved (“last-in, first-out”).
+    # To add an item to the top of the stack, use append(). To retrieve an item
+    # from the top of the stack, use pop() without an explicit index
+    stack = [3, 4, 5]
+    stack.append(6)
+    stack.append(7)
+    assert stack == [3, 4, 5, 6, 7]
+    assert stack.pop() == 7
+    assert stack == [3, 4, 5, 6]
+    assert stack.pop() == 6
+    assert stack.pop() == 5
+    assert stack == [3, 4]
+
+    # It is also possible to use a list as a queue, where the first element
+    # added is the first element retrieved (“first-in, first-out”); however,
+    # lists are not efficient for this purpose. While appends and pops from the
+    # end of list are fast, doing inserts or pops from the beginning of a list
+    # is slow (because all of the other elements have to be shifted by one). To
+    # implement a queue, use collections.deque which was designed to have fast
+    # appends and pops from both ends. For example:
+
+    from collections import deque
+    queue = deque(["Eric", "John", "Michael"])
+    queue.append("Terry")            # Terry arrives
+    queue.append("Graham")           # Graham arrives
+    assert queue.popleft() == 'Eric'  # The first to arrive now leaves
+    assert queue.popleft() == 'John'  # The second to arrive now leaves
+    # Remaining queue in order of arrival
+    assert queue == deque(['Michael', 'Terry', 'Graham'])
+
+    # List comprehensions provide a concise way to create lists. Common
+    # applications are to make new lists where each element is the result of
+    # some operations applied to each member of another sequence or iterable, or
+    # to create a subsequence of those elements that satisfy a certain
+    # condition.
+    squares = list(map(lambda x: x**2, range(10)))
+    assert squares == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+    # or, equivalently (which is more concise and readable):
+    squares = [x**2 for x in range(10)]
+    assert squares == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+    # A list comprehension consists of brackets containing an expression
+    # followed by a for clause, then zero or more for or if clauses. The result
+    # will be a new list resulting from evaluating the expression in the context
+    # of the for and if clauses which follow it. For example, this listcomp
+    # combines the elements of two lists if they are not equal:
+    combinations = [(x, y) for x in [1, 2, 3] for y in [3, 1, 4] if x != y]
+    assert combinations == [(1, 3), (1, 4), (2, 3),
+                            (2, 1), (2, 4), (3, 1), (3, 4)]
+    assert [(x, x**2) for x in range(6)] == [(0, 0), (1, 1), (2, 4),
+                                             (3, 9), (4, 16), (5, 25)]
+
+    vec = [[1, 2, 3],
+           [4, 5, 6],
+           [7, 8, 9],]
+    assert [num for elem in vec for num in elem] == [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    # The following list comprehension will transpose rows and columns:
+    matrix = [[1, 4, 7, 0],
+              [2, 5, 8, 1],
+              [3, 6, 9, 2],]
+    transposed = [[row[i] for row in matrix] for i in range(len(matrix[0]))]
+    assert transposed == [[1, 2, 3],
+                          [4, 5, 6],
+                          [7, 8, 9],
+                          [0, 1, 2],]
+
 
 def control_flow():
     # if statement
@@ -353,7 +503,8 @@ def control_flow():
     # The given end point is never part of the generated sequence; range(10)
     # generates 10 values, the legal indices for items of a sequence of length
     # 10. It is possible to let the range start at another number, or to specify
-    # a different increment (even negative; sometimes this is called the ‘step’):
+    # a different increment (even negative; sometimes this is called the
+    # ‘step’):
     assert list(range(5, 10)) == [5, 6, 7, 8, 9]
     assert list(range(0, 10, 3)) == [0, 3, 6, 9]
     assert list(range(-10, -100, -30)) == [-10, -40, -70]
@@ -371,11 +522,11 @@ def control_flow():
         print(i, v)
 
     # break and continue Statements, and else Clauses on Loops:
-    # The break statement breaks out of the innermost enclosing for or while loop.
-    # A for or while loop can include an else clause.
-    # In a for loop, the else clause is executed after the loop reaches its final iteration.
-    # In a while loop, it’s executed after the loop’s condition becomes false.
-    # In either kind of loop, the else clause is not executed if the loop was
+    # The break statement breaks out of the innermost enclosing for or while
+    # loop. A for or while loop can include an else clause. In a for loop, the
+    # else clause is executed after the loop reaches its final iteration. In a
+    # while loop, it’s executed after the loop’s condition becomes false. In
+    # either kind of loop, the else clause is not executed if the loop was
     # terminated by a break.
     for n in range(2, 10):
         for x in range(2, n):
@@ -393,8 +544,8 @@ def control_flow():
             continue
         print("Found an odd number", num)
 
-    # The pass statement does nothing. It can be used when a statement is required
-    # syntactically but the program requires no action. For example:
+    # The pass statement does nothing. It can be used when a statement is
+    # required syntactically but the program requires no action. For example:
     x = 1  # so we don't loop forever below
     while x < 0:
         pass
@@ -408,12 +559,12 @@ def control_flow():
     # match Statements: new in Python 3.10
     # A match statement takes an expression and compares its value to successive
     # patterns given as one or more case blocks. Only the first pattern that
-    # matches gets executed and it can also extract components (sequence elements
-    # or object attributes) from the value into variables.
-    # The simplest form compares a subject value against one or more literals:
-    # Note the last block: the "variable name" _ acts as a wildcard and never
-    # fails to match. If no case matches, none of the branches is executed.
-    # You can combine several literals in a single pattern using | (“or”):
+    # matches gets executed and it can also extract components (sequence
+    # elements or object attributes) from the value into variables. The simplest
+    # form compares a subject value against one or more literals: Note the last
+    # block: the "variable name" _ acts as a wildcard and never fails to match.
+    # If no case matches, none of the branches is executed. You can combine
+    # several literals in a single pattern using | (“or”):
     status = 418
     s = ""
     match status:
@@ -472,29 +623,28 @@ def defining_functions():
     #          -- Positional only
     #
     # where / and * are optional. If used, these symbols indicate the kind of
-    # parameter by how the arguments may be passed to the function: positional-only,
-    # positional-or-keyword, and keyword-only. Keyword parameters are also referred
-    # to as named parameters.
+    # parameter by how the arguments may be passed to the function:
+    # positional-only, positional-or-keyword, and keyword-only. Keyword
+    # parameters are also referred to as named parameters.
     #
     # If / and * are not present in the function definition, arguments may be
     # passed to a function by position or by keyword.
     #
-    # To mark parameters as keyword-only, indicating the parameters must be passed
-    # by keyword argument, place an * in the arguments list just before the first
-    # keyword-only parameter.
+    # To mark parameters as keyword-only, indicating the parameters must be
+    # passed by keyword argument, place an * in the arguments list just before
+    # the first keyword-only parameter.
 
     # def foo(positional_only_parameters, /, positional_or_keyword_parameters,
     #          *, keyword_only_parameters):
 
-    # All parameters left of the / are treated as positional-only.
-    # If / is not specified in the function definition, that function does not
-    # accept any positional-only arguments.
-    # The logic around optional values for positional-only parameters remains the
-    # same as for positional-or-keyword parameters.
-    # Once a positional-only parameter is specified with a default, the following
-    # positional-only and positional-or-keyword parameters need to have defaults as well.
-    # Positional-only parameters which do not have default values are required
-    # positional-only parameters.
+    # All parameters left of the / are treated as positional-only. If / is not
+    # specified in the function definition, that function does not accept any
+    # positional-only arguments. The logic around optional values for
+    # positional-only parameters remains the same as for positional-or-keyword
+    # parameters. Once a positional-only parameter is specified with a default,
+    # the following positional-only and positional-or-keyword parameters need to
+    # have defaults as well. Positional-only parameters which do not have
+    # default values are required positional-only parameters.
 
     # Therefore, the following would be valid function definitions:
     #   def foo(p1, p2, /, p_or_kw, *, kw):
@@ -569,9 +719,9 @@ def defining_functions():
         pass
 
     # Important warning: The default value is evaluated only once. This makes a
-    # difference when the default is a mutable object such as a list, dictionary,
-    # or instances of most classes. For example, the following function accumulates
-    # the arguments passed to it on subsequent calls:
+    # difference when the default is a mutable object such as a list,
+    # dictionary, or instances of most classes. For example, the following
+    # function accumulates the arguments passed to it on subsequent calls:
 
     def foo(a, L=[]):
         L.append(a)
@@ -601,11 +751,49 @@ def defining_functions():
     assert bar(2) == [2]
     assert bar(3) == [3]
 
+    # Small anonymous functions can be created with the lambda keyword. This
+    # function returns the sum of its two arguments: lambda a, b: a+b. Lambda
+    # functions can be used wherever function objects are required. They are
+    # syntactically restricted to a single expression. Semantically, they are
+    # just syntactic sugar for a normal function definition. Like nested
+    # function definitions, lambda functions can reference variables from the
+    # containing scope:
+    def make_incrementor(n):
+        return lambda x: x + n
+
+    f = make_incrementor(42)
+    assert f(0) == 42
+    assert f(1) == 43
+
+    # Another use is to pass a small function as an argument:
+    pairs = [(1, 'one'), (2, 'two'), (3, 'three'), (4, 'four')]
+    pairs.sort(key=lambda pair: pair[1])
+    assert pairs == [(4, 'four'), (1, 'one'), (3, 'three'), (2, 'two')]
+
+    # Function annotations are completely optional metadata information about
+    # the types used by user-defined functions (see PEP 3107 and PEP 484 for
+    # more information).
+
+    # Annotations are stored in the __annotations__ attribute of the function as
+    # a dictionary and have no effect on any other part of the function.
+    # Parameter annotations are defined by a colon after the parameter name,
+    # followed by an expression evaluating to the value of the annotation.
+    # Return annotations are defined by a literal ->, followed by an expression,
+    # between the parameter list and the colon denoting the end of the def
+    # statement. The following example has a required argument, an optional
+    # argument, and the return value annotated:
+    def foo(ham: str, eggs: str = 'eggs') -> str:
+        print("Annotations:", foo.__annotations__)
+        print("Arguments:", ham, eggs)
+        return ham + ' and ' + eggs
+
+    assert foo('chicken') == "chicken and eggs"
+
 ################################################################################
 
 
-arithmetic_operations()
-text_handling()
+# arithmetic_operations()
+# text_handling()
 list_operations()
-control_flow()
-defining_functions()
+# control_flow()
+# defining_functions()
