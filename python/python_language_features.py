@@ -379,37 +379,6 @@ def list_operations():
     list2 = list1[:]
     assert list1 == list2
 
-    # The list methods make it very easy to use a list as a stack, where the
-    # last element added is the first element retrieved (“last-in, first-out”).
-    # To add an item to the top of the stack, use append(). To retrieve an item
-    # from the top of the stack, use pop() without an explicit index
-    stack = [3, 4, 5]
-    stack.append(6)
-    stack.append(7)
-    assert stack == [3, 4, 5, 6, 7]
-    assert stack.pop() == 7
-    assert stack == [3, 4, 5, 6]
-    assert stack.pop() == 6
-    assert stack.pop() == 5
-    assert stack == [3, 4]
-
-    # It is also possible to use a list as a queue, where the first element
-    # added is the first element retrieved (“first-in, first-out”); however,
-    # lists are not efficient for this purpose. While appends and pops from the
-    # end of list are fast, doing inserts or pops from the beginning of a list
-    # is slow (because all of the other elements have to be shifted by one). To
-    # implement a queue, use collections.deque which was designed to have fast
-    # appends and pops from both ends. For example:
-
-    from collections import deque
-    queue = deque(["Eric", "John", "Michael"])
-    queue.append("Terry")            # Terry arrives
-    queue.append("Graham")           # Graham arrives
-    assert queue.popleft() == 'Eric'  # The first to arrive now leaves
-    assert queue.popleft() == 'John'  # The second to arrive now leaves
-    # Remaining queue in order of arrival
-    assert queue == deque(['Michael', 'Terry', 'Graham'])
-
     # List comprehensions provide a concise way to create lists. Common
     # applications are to make new lists where each element is the result of
     # some operations applied to each member of another sequence or iterable, or
@@ -446,6 +415,185 @@ def list_operations():
                           [4, 5, 6],
                           [7, 8, 9],
                           [0, 1, 2],]
+
+    # There is a way to remove an item from a list given its index instead of
+    # its value: the del statement. This differs from the pop() method which
+    # returns a value. The del statement can also be used to remove slices from
+    # a list or clear the entire list
+    a = [1, 22, 333, 4444, 5, 66]
+    del a[0]
+    assert a == [22, 333, 4444, 5, 66]
+    del a[2:4]
+    assert a == [22, 333, 66]
+    del a[:]
+    assert a == []
+    # del can also be used to delete entire variables. Referencing the name a
+    # hereafter is an error (at least until another value is assigned to it).
+    a = [1, 2, 3]
+    del a
+    try:
+        a.append(0)
+        assert False  # should not fall down here
+    except NameError:
+        # NameError: name 'a' is not defined
+        pass
+
+
+def stack_queue_operations():
+    # The list methods make it very easy to use a list as a stack, where the
+    # last element added is the first element retrieved (“last-in, first-out”).
+    # To add an item to the top of the stack, use append(). To retrieve an item
+    # from the top of the stack, use pop() without an explicit index
+    stack = [3, 4, 5]
+    stack.append(6)
+    stack.append(7)
+    assert stack == [3, 4, 5, 6, 7]
+    assert stack.pop() == 7
+    assert stack == [3, 4, 5, 6]
+    assert stack.pop() == 6
+    assert stack.pop() == 5
+    assert stack == [3, 4]
+
+    # It is also possible to use a list as a queue, where the first element
+    # added is the first element retrieved (“first-in, first-out”); however,
+    # lists are not efficient for this purpose. While appends and pops from the
+    # end of list are fast, doing inserts or pops from the beginning of a list
+    # is slow (because all of the other elements have to be shifted by one). To
+    # implement a queue, use collections.deque which was designed to have fast
+    # appends and pops from both ends. For example:
+    from collections import deque
+    queue = deque(["Eric", "John", "Michael"])
+    queue.append("Terry")            # Terry arrives
+    queue.append("Graham")           # Graham arrives
+    assert queue.popleft() == 'Eric'  # The first to arrive now leaves
+    assert queue.popleft() == 'John'  # The second to arrive now leaves
+    # Remaining queue in order of arrival
+    assert queue == deque(['Michael', 'Terry', 'Graham'])
+
+
+def set_operations():
+    basket = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
+    print(basket)
+    assert len(basket) == 4
+    assert 'orange' in basket
+    assert 'grapes' not in basket
+
+    # Demonstrate set operations on unique letters from two words
+    # note that string is iterable and set() takes an iterable
+    s1 = set('abracadabra')
+    s2 = set('alacazam')
+    assert "".join(sorted(s1)) == "abcdr"
+    assert "".join(sorted(s2)) == "aclmz"
+    # letters in s1 but not in s2
+    # order does not matter, sets are unordered
+    assert s1 - s2 == {'r', 'd', 'b'}
+    assert s1.difference(s2) == {'r', 'd', 'b'}
+    # union
+    assert s1 | s2 == {'a', 'c', 'r', 'd', 'b', 'm', 'z', 'l'}
+    assert s1.union(s2) == {'a', 'c', 'r', 'd', 'b', 'm', 'z', 'l'}
+    # intersection
+    assert s1 & s2 == {'a', 'c'}
+    assert s1.intersection(s2) == {'a', 'c'}
+
+    assert s1 ^ s2 == {'r', 'd', 'b', 'm', 'z', 'l'}
+    assert s1.symmetric_difference(s2) == {'r', 'd', 'b', 'm', 'z', 'l'}
+
+    # similarly to list comprehensions, set comprehensions are also supported:
+    s1 = {x for x in 'abracadabra' if x not in 'abc'}
+    assert s1 == {'r', 'd'}
+
+
+def tuple_operations():
+    # A tuple consists of a number of values separated by commas, for instance:
+    t = 12345, 54321, 'hello'
+    assert t[0] == 12345
+    assert t[2] == 'hello'
+    assert t == (12345, 54321, 'hello')
+    # tuples are NOT lists
+    assert t != [12345, 54321, 'hello']
+    assert type(t) is tuple
+
+    # tuple unpacking
+    t = (12345, 54321, 'hello')
+    x, y, z = t
+    assert x == 12345
+    assert y == 54321
+    assert z == 'hello'
+
+    t = ()  # empty tuple
+    assert len(t) == 0
+    t = 'hello',  # tuple with 1 item, note trailing comma
+    assert len(t) == 1
+    assert t == ('hello',)
+
+    # Tuples may be nested:
+    t = 'a', 'b', 'c'
+    u = t, (0, 1, 2, 3, 4)
+    assert u == (('a', 'b', 'c'), (0, 1, 2, 3, 4))
+
+    # Tuples are immutable:
+    t = 'a', 'b', 'c'
+    try:
+        t[0] = 'x'
+        assert False
+    except TypeError:
+        # TypeError: 'tuple' object does not support item assignment
+        pass
+
+    # but they can contain mutable objects:
+    v = ([1, 2, 3], [3, 2, 1])
+    v[0][0] = 0
+    assert v == ([0, 2, 3], [3, 2, 1])
+
+    from collections import namedtuple
+    Point = namedtuple('Point', ['x', 'y'])
+    p = Point(11, y=22)  # instantiate with positional or keyword arguments
+    assert p[0] + p[1] == 33  # indexable like the plain tuple (11, 22)
+    x, y = p  # unpack like a regular tuple
+    assert x, y == (11, 22)
+    assert p.x + p.y == 33  # fields also accessible by name
+    # readable __repr__ with a name=value style
+    print(p)
+    assert repr(p) == "Point(x=11, y=22)"
+
+
+def dictionary_operations():
+    # It is best to think of a dictionary as a set of key: value pairs, with the
+    # requirement that the keys are unique (within one dictionary). A pair of
+    # braces creates an empty dictionary: {}. Placing a comma-separated list of
+    # key:value pairs within the braces adds initial key:value pairs to the
+    # dictionary
+    d = {'jack': 4098, 'sape': 4139}
+    assert d['jack'] == 4098
+    d['guido'] = 4127
+    assert 'guido' in d
+    del d['sape']
+    assert 'sape' not in d
+    d['irv'] = 4127
+    # keys are returned in the same order as they were added to the dictionary
+    assert list(d) == ['jack', 'guido', 'irv']
+    assert sorted(d) == ['guido', 'irv', 'jack']
+
+    # The dict() constructor builds dictionaries directly from sequences of
+    # key-value pairs:
+    d = dict([('sape', 4139), ('guido', 4127), ('jack', 4098)])
+    assert d['sape'] == 4139
+    assert len(d) == 3
+
+    # dict comprehensions can be used to create dictionaries from arbitrary key
+    # and value expressions:
+    d = {x: x**2 for x in (2, 4, 6)}
+    assert d[2] == 4
+    assert d[4] == 16
+    assert d[6] == 36
+    assert 2 in d
+    assert 5 not in d
+
+    # When the keys are simple strings, it is sometimes easier to specify pairs
+    # using keyword arguments:
+    d = dict(sape=4139, guido=4127, jack=4098)
+    assert d['jack'] == 4098
+    assert len(d) == 3
 
 
 def control_flow():
@@ -794,6 +942,10 @@ def defining_functions():
 
 # arithmetic_operations()
 # text_handling()
-list_operations()
+# list_operations()
+# stack_queue_operations()
+# set_operations()
+# tuple_operations()
+dictionary_operations()
 # control_flow()
 # defining_functions()
