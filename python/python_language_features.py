@@ -940,12 +940,12 @@ def defining_functions():
 ################################################################################
 
 
-# arithmetic_operations()
-# text_handling()
-# list_operations()
-# stack_queue_operations()
-# set_operations()
-# tuple_operations()
+arithmetic_operations()
+text_handling()
+list_operations()
+stack_queue_operations()
+set_operations()
+tuple_operations()
 dictionary_operations()
-# control_flow()
-# defining_functions()
+control_flow()
+defining_functions()
