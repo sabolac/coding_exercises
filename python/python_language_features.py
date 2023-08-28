@@ -511,10 +511,68 @@ def defining_functions():
     #   def name(p1, p2=None, /, p_or_kw, *, kw):
     #   def name(p1=None, p2, /):
 
+    def standard_arg(arg):
+        return arg
+
+    def pos_only_arg(arg, /):
+        return arg
+
+    def kwd_only_arg(*, arg):
+        return arg
+
+    def combined_example(pos_only, /, standard, *, kwd_only):
+        return pos_only, standard, kwd_only
+
+    # variadic arguments
+    def variadic_arg1(arg1, arg2, arg3=3, *args):
+        return "".join([str(i) for i in [arg1, arg2, arg3] + list(args)])
+
+    # variadic arguments
+    def variadic_arg2(arg1, arg2, arg3=3, *args, **kwargs):
+        r = f"arg1={arg1}, arg2={arg2}, arg3={arg3}"
+        r += ", a:" + ", a:".join([str(i) for i in list(args)])
+        r += ", kw:" + ", kw:".join([str(i) for i in list(kwargs.values())])
+        return r
+
+    assert standard_arg(2) == 2
+    assert standard_arg(arg=2) == 2
+    assert pos_only_arg(1) == 1
+    assert kwd_only_arg(arg=3) == 3
+    assert kwd_only_arg(arg=3) == 3
+    assert combined_example(1, 2, kwd_only=3) == (1, 2, 3)
+    assert combined_example(1, standard=2, kwd_only=3) == (1, 2, 3)
+
+    assert variadic_arg1(1, 2, 4, 5, 6, 7, 8) == "1245678"
+
+    s = variadic_arg2(1, 2, 4, 5, 6, 7, 8,
+                      **{"k1": 1, "k2": 2})
+    assert s == "arg1=1, arg2=2, arg3=4, a:5, a:6, a:7, a:8, kw:1, kw:2"
+
+    # using / (positional only arguments) to avoid collision with kwds as it may
+    # contain a key named 'bar'
+    def foo(bar, /, **kwds):  # bar is positional only so we can have a key 'bar' in kwds
+        print(f"bar={bar}")
+        return 'bar' in kwds
+
+    assert foo(1, **{'bar': 2, 'baz': 3})
+
+    # same call will fail with the following error, if we do not use / :
+    # TypeError: foo() got multiple values for argument 'name'
+    def foo(bar,  **kwds):  # bar is positional only so we can have a key 'bar' in kwds
+        print(f"bar={bar}")
+        return 'bar' in kwds
+
+    try:
+        foo(1, **{'bar': 2, 'baz': 3})
+        assert False  # should not fall down here
+    except TypeError:
+        pass
+
     # Important warning: The default value is evaluated only once. This makes a
     # difference when the default is a mutable object such as a list, dictionary,
     # or instances of most classes. For example, the following function accumulates
     # the arguments passed to it on subsequent calls:
+
     def foo(a, L=[]):
         L.append(a)
         return L
