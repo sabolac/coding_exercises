@@ -69,6 +69,116 @@ def arithmetic_operations():
     assert result == 8.8
 
 
+def builtin_functions():
+    # https://docs.python.org/3/library/functions.html
+    # Quick way to get this list is to run dir(__builtins__) at the Python
+    # command line
+    # __import__()
+
+    # abs()
+    assert abs(-1) == 1
+
+    # aiter()
+
+    # all()
+    assert all([1, 2, 3])  # all numbers evaluates to True except 0
+    assert not all([1, 2, 0, 3])
+    assert all(["ab", "cde"])
+    assert not all(["ab", "cde", ""])
+    assert not all(["ab", None, "cde"])
+
+    # anext()
+
+    # any()
+    assert any([1, 2, 3, 0])  # all numbers evaluates to True except 0
+    assert not all([0, 0, 0])
+    assert any(["ab", "cde"])
+    assert not all(["", None, ""])
+
+    # ascii()
+    s = "√ represents square root"
+    assert ascii(s) == "'\\u221a represents square root'"
+
+    # bin()
+    assert bin(3) == '0b11'
+    assert bin(-10) == '-0b1010'
+
+    # bool()
+    assert not bool()
+    assert bool(1)
+    assert bool(-1)
+    assert not bool(0)
+    assert not bool(None)
+    assert not bool("")
+    assert bool("foo")
+
+    # breakpoint()
+    # bytearray()
+    # bytes()
+    # callable()
+    # chr()
+    # classmethod()
+    # compile()
+    # complex()
+    # delattr()
+    # dict()
+    # dir()
+
+    # divmod()
+    assert divmod(5, 3) == (5//3, 5 % 3)
+
+    # enumerate()
+    # eval()
+    # exec()
+    # filter()
+    # float()
+    # format()
+    # frozenset()
+    # getattr()
+    # globals()
+    # hasattr()
+    # hash()
+    # help()
+    # hex()
+    # id()
+    # input()
+    # int()
+    # isinstance()
+    # issubclass()
+    # iter()
+    # len()
+    # list()
+    # locals()
+    # map()
+    # max()
+    # memoryview()
+    # min()
+    # next()
+    # object()
+    # oct()
+    # open()
+    # ord()
+    # pow()
+    # print()
+    # property()
+    # range()
+    # repr()
+    # reversed()
+    # round()
+    # set()
+    # setattr()
+    # slice()
+    # sorted()
+    # staticmethod()
+    # str()
+    # sum()
+    # super()
+    # tuple()
+    # type()
+    # vars()
+    # zip()
+
+
 def text_handling():
     # strings are of type str
     s = "this is a string"
@@ -1046,6 +1156,7 @@ def looping_techniques():
 ################################################################################
 
 arithmetic_operations()
+builtin_functions()
 control_flow()
 defining_functions()
 dictionary_operations()
