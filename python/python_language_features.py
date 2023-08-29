@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+
+"""
+This is a summary of all the example code in the Python 3 Tutorial at
+https://docs.python.org/3/tutorial/
+"""
+
+
 def arithmetic_operations():
     # division / always returns a floating point number  ...
     result = 3 / 2
@@ -230,6 +237,10 @@ def text_handling():
     s = "Python"
     assert len(s) == 6
 
+    s1, s2, s3 = '', 'Trondheim', 'Hammer Dance'
+    non_null = s1 or s2 or s3
+    assert non_null == s2
+
 
 def list_operations():
     # Python knows a number of compound data types, used to group together other
@@ -438,6 +449,27 @@ def list_operations():
         # NameError: name 'a' is not defined
         pass
 
+    # Comparing Sequences and Other Types
+    # Sequence objects typically may be compared to other objects with the same
+    # sequence type. The comparison uses lexicographical ordering: first the
+    # first two items are compared, and if they differ this determines the
+    # outcome of the comparison; if they are equal, the next two items are
+    # compared, and so on, until either sequence is exhausted. If two items to
+    # be compared are themselves sequences of the same type, the lexicographical
+    # comparison is carried out recursively. If all items of two sequences
+    # compare equal, the sequences are considered equal. If one sequence is an
+    # initial sub-sequence of the other, the shorter sequence is the smaller
+    # (lesser) one. Lexicographical ordering for strings uses the Unicode code
+    # point number to order individual characters. Some examples of comparisons
+    # between sequences of the same type:
+    assert (1, 2, 3) < (1, 2, 4)
+    assert [1, 2, 3] < [1, 2, 4]
+    assert 'ABC' < 'C' < 'Pascal' < 'Python'
+    assert (1, 2, 3, 4) < (1, 2, 4)
+    assert (1, 2) < (1, 2, -1)
+    assert (1, 2, 3) == (1.0, 2.0, 3.0)
+    assert (1, 2, ('aa', 'ab')) < (1, 2, ('abc', 'a'), 4)
+
 
 def stack_queue_operations():
     # The list methods make it very easy to use a list as a stack, where the
@@ -570,6 +602,7 @@ def dictionary_operations():
     del d['sape']
     assert 'sape' not in d
     d['irv'] = 4127
+    # As of Python 3.7, regular dicts are guaranteed to be ordered. That means
     # keys are returned in the same order as they were added to the dictionary
     assert list(d) == ['jack', 'guido', 'irv']
     assert sorted(d) == ['guido', 'irv', 'jack']
@@ -595,6 +628,17 @@ def dictionary_operations():
     assert d['jack'] == 4098
     assert len(d) == 3
 
+    # When looping through dictionaries, the key and the corresponding value can
+    # be retrieved at the same time using the items() method.
+    d = {x: x**2 for x in (2, 4, 6)}
+    for k, v in d.items():
+        assert v == k**2
+
+    # iterating through a dictionary directly gives the the keys (and in the
+    # same order as they are added)
+    d = {x: x**2 for x in (2, 4, 6)}
+    assert [k for k in d] == [2, 4, 6]
+
 
 def control_flow():
     # if statement
@@ -613,6 +657,18 @@ def control_flow():
 
     print(s)
     assert s == "Single"
+
+    # Comparisons can be chained. For example, a < b == c tests whether a is
+    # less than b and moreover b equals c.
+    a, b, c = 1, 2, 2
+    s = "no"
+    if a < b == c:
+        s = "yes"
+    assert s == "yes"
+    # equivalent to
+    if a < b and b == c:
+        s = "equivalent"
+    assert s == "equivalent"
 
     # for loops
     # Python’s for statement iterates over the items of any sequence (a list or
@@ -937,15 +993,65 @@ def defining_functions():
 
     assert foo('chicken') == "chicken and eggs"
 
+
+def looping_techniques():
+
+    # When looping through dictionaries, the key and corresponding value can be
+    # retrieved at the same time using the items() method.
+    knights = {'gallahad': 'the pure', 'robin': 'the brave'}
+    for k, v in knights.items():
+        print(k, v)
+
+    # When looping through a sequence, the position index and corresponding
+    # value can be retrieved at the same time using the enumerate() function.
+    for i, v in enumerate(['tic', 'tac', 'toe']):
+        print(i, v)
+
+    # To loop over two or more sequences at the same time, the entries can be
+    # paired with the zip() function.
+    questions = ['name', 'quest', 'favorite color']
+    answers = ['lancelot', 'the holy grail', 'blue']
+    for q, a in zip(questions, answers):
+        print(f'What is your {q}?  It is {a}.')
+
+    # To loop over a sequence in reverse, first specify the sequence in a
+    # forward direction and then call the reversed() function.
+    assert [i for i in reversed(range(1, 10, 2))] == [9, 7, 5, 3, 1]
+
+    # To loop over a sequence in sorted order, use the sorted() function which
+    # returns a new sorted list while leaving the source unaltered.
+    basket = ['apple', 'orange', 'apple', 'pear', 'orange', 'banana']
+    assert [i for i in sorted(basket)] == ["apple",
+                                           "apple",
+                                           "banana",
+                                           "orange",
+                                           "orange",
+                                           "pear"]
+    # Using set() on a sequence eliminates duplicate elements. The use of
+    # sorted() in combination with set() over a sequence is an idiomatic way to
+    # loop over unique elements of the sequence in sorted order.
+    assert [i for i in sorted(set(basket))] == ["apple",
+                                                "banana",
+                                                "orange",
+                                                "pear"]
+
+    # It is sometimes tempting to change a list while you are looping over it;
+    # however, it is often simpler and safer to create a new list instead.
+    import math
+    raw_data = [56.2, float('NaN'), 51.7, 55.3, 52.5, float('NaN'), 47.8]
+    filtered_data = [v for v in raw_data if not math.isnan(v)]
+    assert filtered_data == [56.2, 51.7, 55.3, 52.5, 47.8]
+
+
 ################################################################################
 
-
 arithmetic_operations()
-text_handling()
-list_operations()
-stack_queue_operations()
-set_operations()
-tuple_operations()
-dictionary_operations()
 control_flow()
 defining_functions()
+dictionary_operations()
+list_operations()
+looping_techniques()
+set_operations()
+stack_queue_operations()
+text_handling()
+tuple_operations()
