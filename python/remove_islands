@@ -7,6 +7,12 @@
 import pprint
 pp = pprint.pprint
 
+# Problem: Given a rectangular matrix of 0s and 1s, where 0 is water and 1 is
+# land, remove all islands (those surrounded by water) by replacing 1s with 0s A
+# 1 cell is connected the border of the matrix via a chain of 1s going
+# horizontally or vertically (but not diagonally)
+# https://youtu.be/4tYoVx0QoN0
+
 
 def main():
     m = [
