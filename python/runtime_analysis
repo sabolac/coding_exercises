@@ -1,0 +1,33 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+plt.style.use('bmh')
+
+# setup runtime comparisons
+n = np.linspace(1, 100)
+
+
+big_o_types = {
+    'constant': np.ones(n.shape) + 19,
+    'logarithmic': np.log(n),
+    'linear': n,
+    'loglinear': n*np.log(n),
+    'quadratic': n**2,
+    'cubic': n**3,
+    'exponential': 2**n,
+}
+
+
+# plot setup
+plt.ylim(0, 1000)
+
+
+for k, v in big_o_types.items():
+    plt.plot(n, v, label=k)
+
+
+plt.legend(loc=0)
+plt.ylabel('Relative Runtime')
+plt.xlabel('n')
+plt.show()
