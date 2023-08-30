@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+
+"""
+Note that this will run fine with latest Python3 (e.g. 3.10) Running with
+earlier versions (e.g. Python 3.6.8 or Python2), the counter will keep
+fluctuating as worker1 and worker2's access to the shared variable counter is
+not synchronized
+"""
+
+
 import threading
 import time
 

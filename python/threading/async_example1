@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import asyncio
-import time
 
 
 counter = 0
@@ -12,6 +11,9 @@ async def worker1():
     while True:
         counter += 1
         counter -= 1
+        # async methods won't yield execution to another one until a call to
+        # await. Thus the lines prior to the following will not be interleaved
+        # with the execution of other coroutines worker2 and printer
         await asyncio.sleep(0)
 
 
