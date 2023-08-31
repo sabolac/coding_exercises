@@ -41,17 +41,52 @@ complexity?
 """
 
 
+from bisect import bisect as binary_search
 from typing import List
 import random
+import time
 
 
 def two_sum(nums: List[int], target: int) -> List[int]:
+    """ O(n^2) time complexity, O(1) space"""
     len_nums = len(nums)
     for i, v1 in enumerate(nums):
         v2 = target - v1
         for j in range(i+1, len_nums):
             if nums[j] == v2:
                 return [i, j]
+
+
+def two_sum_fast(nums: List[int], target: int) -> List[int]:
+    """ O(nlogn) time complexity, O(n) space """
+
+    # make a copy of the original list and sort it in O(nlogn)
+    sorted_nums = sorted([(v, i) for i, v in enumerate(nums)])
+    for i, (v1, k) in enumerate(sorted_nums):
+        v2 = target - v1
+        j = binary_search(sorted_nums, v2, lo=i+1, key=lambda x: x[0])
+        v, p = sorted_nums[j-1]
+        if v == v2 and j != i:
+            return [k, p]
+
+
+def two_sum_fastest(nums: List[int], target: int) -> List[int]:
+    """ O(n) time complexity, O(n) space """
+
+    # keep a dictionary to refer back to the index in original array given a
+    # value. Use the hash table to lookup v2 in constant time
+    value_2_index = {}
+    for i, v in enumerate(nums):
+        # handle case where there is a duplicate value v and the target = v+v
+        if v in value_2_index and v+v == target:
+            return [value_2_index[v], i]
+        else:
+            value_2_index[v] = i
+
+    for v1 in value_2_index:
+        v2 = target - v1
+        if v2 in value_2_index and value_2_index[v1] != value_2_index[v2]:
+            return [value_2_index[v1], value_2_index[v2]]
 
 
 def generate_test_case(list_size=100):
@@ -62,10 +97,9 @@ def generate_test_case(list_size=100):
     # adjust for duplicates if any during random generation
     list_size = len(random_list)
 
-    # pick two random positions in the list
-    i, j = 0, 0
-    while i == j or i > j:
-        i, j = random.randrange(list_size), random.randrange(list_size)
+    # pick two random positions in the list, i being the first one in the list
+    i = random.randrange(list_size-1)
+    j = random.randrange(i+1, list_size)
 
     # set to larger than any other item in the list so i, j is guaranteed result
     random_list[i] = max_val + 1000
@@ -74,8 +108,25 @@ def generate_test_case(list_size=100):
     return random_list, i, j
 
 
-assert two_sum([1, 2, 3, 4, 5], 6) == [0, 4]
+def main():
+    test_cases = []
+    for _ in range(500):
+        test_cases.append(generate_test_case(10**3))
 
-for _ in range(50):
-    l, i, j = generate_test_case(100)
-    assert two_sum(l, l[i]+l[j]) == [i, j]
+    for f in [two_sum, two_sum_fast, two_sum_fastest]:
+        assert f([2, 7, 11, 1], 9) == [0, 1]
+        assert f([3, 2, 4], 6) == [1, 2]
+        assert f([3, 3], 6) == [0, 1]
+        assert f([3, 4], 7) == [0, 1]
+        assert f([1, 2, 3, 4, 5], 6) == [0, 4]
+
+        total_time = 0
+        for nums, i, j in test_cases:
+            start = time.perf_counter()
+            result = f(nums, nums[i] + nums[j])
+            total_time += time.perf_counter() - start
+            assert result == [i, j]
+        print(f'{f.__name__}:{total_time=}')
+
+
+main()
