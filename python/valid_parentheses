@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+
+"""
+Ref: https://leetcode.com/problems/valid-parentheses/
+
+Given a string s containing just the characters '(', ')', '{', '}', '[' and ']',
+determine if the input string is valid.
+
+An input string is valid if:
+
+Open brackets must be closed by the same type of brackets.
+Open brackets must be closed in the correct order.
+Every close bracket has a corresponding open bracket of the same type.
+
+
+Example 1:
+
+Input: s = "()"
+Output: true
+
+Example 2:
+
+Input: s = "()[]{}"
+Output: true
+
+Example 3:
+
+Input: s = "(]"
+Output: false
+
+
+Constraints:
+
+1 <= s.length <= 10^4
+s consists of parentheses only '()[]{}'.
+"""
+from collections import deque as stack
+
+
+class Solution:
+    def isValid(self, s: str) -> bool:
+        # need to have even number of chars
+        if len(s) % 2 == 1:
+            return False
+
+        open_stack = stack()
+        for c in s:
+            if c in ['(', '{', '[']:
+                open_stack.append(c)
+            elif c in [')', '}', ']']:
+                if len(open_stack) == 0:
+                    return False
+                k = open_stack.pop()
+                if (k, c) not in [('(', ')'), ('{', '}'), ('[', ']')]:
+                    return False
+        return len(open_stack) == 0
+
+
+def main():
+    assert Solution().isValid(r"()")
+    assert Solution().isValid(r"()[]{}")
+    assert not Solution().isValid(r"(]")
+    assert not Solution().isValid(r"((")
+    assert Solution().isValid(r"{((){})[()([])]}")
+
+
+main()
