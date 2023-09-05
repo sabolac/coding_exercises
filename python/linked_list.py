@@ -52,6 +52,43 @@ class LinkedList:
     def remove_last(self):
         pass
 
+    def print_cycle(self):
+        n = self.head
+        i = self.size+1
+        while i > 0:
+            i -= 1
+            print(n.value, end=" -> ")
+            n = n.next
+        print()
+
+    def make_cycle(self, i: int) -> None:
+        n = self.head
+
+        while i > 0:
+            i -= 1
+            n = n.next
+
+        self.tail.next = n
+
+    def remove_cycle(self):
+        self.tail.next = None
+
+    def has_cycle(self) -> bool:
+        # s will go though the list single node (s) at a time
+        # d will go though the list double node (d) at a time
+        # if they ever meet before reaching a null node at the end, it means
+        # there is a cycle
+        s = d = self.head
+        while d:
+            s = s.next
+            d = d.next
+            if d:
+                d = d.next
+                if s == d:
+                    return True
+
+        return False
+
 
 def main():
     l = LinkedList()
@@ -68,7 +105,14 @@ def main():
     l.print()
     l.insert_after(l.find_first_node_with_value(5), LinkedList.Node(4.5))
     l.print()
-    l.append(-1)
+
+    for i in range(8):
+        l.make_cycle(i)
+        l.print_cycle()
+        assert l.has_cycle()
+        l.remove_cycle()
+        assert not l.has_cycle()
+    l.remove_cycle()
     l.print()
 
 
