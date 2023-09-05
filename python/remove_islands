@@ -67,8 +67,9 @@ def remove_islands(m):
         # check neighbors (left, right, up, down) and if any of them is connected
         #  mark this one m[i,j] connected as well
 
-        # do not go out of the map when adding/subtracing 1 below so use max/min as needed (no harm in adding the
-        # current one itself as it is already marked as CONNECTED)
+        # do not go out of the map when adding/subtracting 1 below, so use
+        # max/min as needed (no harm in adding the current one itself as it is
+        # already marked as CONNECTED)
         neighbors = []
         neighbors.append((r, max(c-1, 0)))  # left
         neighbors.append((r, min(c+1, COLS-1)))  # right
