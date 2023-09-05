@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+from typing import List
+import random
+
+
+def contains_duplicate_brute_force(nums: List[int]) -> bool:
+    """O(n^2) time complexity, O(1) space"""
+    l = len(nums)
+    for i in range(0, l-1):
+        for j in range(i+1, l):
+            if nums[i] == nums[j]:
+                return True
+
+    return False
+
+
+def contains_duplicate_sort(nums: List[int]) -> bool:
+    """O(nlogn) time complexity, O(n) space"""
+    sorted_nums = sorted(nums)
+
+    for i in range(len(sorted_nums)-1):
+        if sorted_nums[i] == sorted_nums[i+1]:
+            return True
+
+    return False
+
+
+def contains_duplicate_hash(nums: List[int]) -> bool:
+    """O(n) time complexity, O(n) space"""
+    s = set()
+    # loop for all nums -> O(n)
+    for v in nums:
+        # set lookup is O(1)
+        if v in s:
+            return True
+        # set insert is O(1)
+        s.add(v)
+
+    return False
+
+
+def main():
+    for f in [contains_duplicate_brute_force,
+              contains_duplicate_sort,
+              contains_duplicate_hash]:
+        size = 100
+        l = random.sample(range(size*10), size)
+        assert not f(l)
+        i = random.randrange(size)
+        item = random.choice(l)
+        l.insert(i, item)
+        assert f(l)
+
+
+main()

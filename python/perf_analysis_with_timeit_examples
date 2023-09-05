@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+python -m timeit -s "r=10**6; s=set(range(r)); x=r/2" "x in s"
+python -m timeit -s "r=10**6; s=set(range(r)); x=r/2" "s.add(x)"
+python -m timeit -s "r=10**6; s=set(range(r)); x=r/2" "s.add(r)"
+
+python -m timeit -s "r=10**6; d=dict.fromkeys(range(r)); x=r/2" "x in d"
+python -m timeit -s "r=10**6; d=dict.fromkeys(range(r)); x=r/2" "d[x]=1"
+python -m timeit -s "r=10**6; d=dict.fromkeys(range(r)); x=r/2" "d[r]=1"
+
+
+# add .py to the contains_duplicate file to make it a module and comment out the call to main before running the following:
+python -m timeit -s "import contains_duplicate as m" -s "import random" -s "r=10**4" -s "l=random.sample(range(r), r)" "m.contains_duplicate_brute_force(l)"
+python -m timeit -s "import contains_duplicate as m" -s "import random" -s "r=10**4" -s "l=random.sample(range(r), r)" "m.contains_duplicate_sort(l)"
+python -m timeit -s "import contains_duplicate as m" -s "import random" -s "r=10**4" -s "l=random.sample(range(r), r)" "m.contains_duplicate_hash(l)"
