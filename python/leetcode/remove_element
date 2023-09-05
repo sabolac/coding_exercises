@@ -61,11 +61,11 @@ class Solution:
 def main():
     l = [3, 2, 2, 3]
     assert Solution().removeElement(l, 3) == 2
-    print(l)
+    assert l[:2] == [2, 2]
 
     l = [0, 1, 2, 2, 3, 0, 4, 2]
     assert Solution().removeElement(l, 2) == 5
-    print(l)
+    assert l[:5] == [0, 1, 3, 0, 4]
 
 
 main()
