@@ -57,7 +57,7 @@ class Solution:
                     max_profit = current_profit
                     buy = buy_candidate
                     sell = sell_candidate
-                buy_candidate, sell_candidate = price, price
+                buy_candidate = sell_candidate = price
 
         current_profit = sell_candidate - buy_candidate
         if current_profit >= max_profit:
