@@ -48,7 +48,7 @@ class Solution:
             x, d = divmod(x, 10)
             digits.append(d)
 
-        for i in range(round(len(digits)/2)):
+        for i in range(len(digits)//2):
             if digits[i] != digits[-1-i]:
                 return False
 
@@ -67,6 +67,7 @@ class Solution:
 def main():
     assert Solution().is_palindrome(0)
     assert Solution().is_palindrome(1)
+    assert Solution().is_palindrome(11)
     assert Solution().is_palindrome(121)
     assert Solution().is_palindrome(1221)
     assert Solution().is_palindrome(12321)
@@ -78,6 +79,8 @@ def main():
     assert not Solution().is_palindrome(-12321)
     assert not Solution().is_palindrome(-123321)
 
+    assert not Solution().is_palindrome(12)
+    assert not Solution().is_palindrome(123)
     assert not Solution().is_palindrome(123456)
     assert not Solution().is_palindrome(12112211)
     assert not Solution().is_palindrome(12218989)

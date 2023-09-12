@@ -81,15 +81,91 @@ words[i].length <= maxWidth
 
 
 from typing import List
+from math import ceil
 
 
 class Solution:
     def fullJustify(self, words: List[str], maxWidth: int) -> List[str]:
-        pass
+        N = len(words)
+        lines = []
+        i = 0
+        while i < N:
+            start = i
+            next_word = words[i]
+            line_width = len(next_word)
+            i += 1
+            if i == N:
+                lines.append(self.make_justified_line(
+                    words, start, i, maxWidth))
+                break
+            next_word = words[i]
+            while line_width + 1 + len(next_word) <= maxWidth:
+                line_width += 1 + len(next_word)
+                i += 1
+                if i == N:
+                    break
+                next_word = words[i]
+            lines.append(self.make_justified_line(words, start, i, maxWidth))
+
+        return lines
+
+    def make_justified_line(self, words: List[str], start: int, end: int, maxWidth: int) -> str:
+        word_count = end - start
+
+        # left justify single word lines
+        if word_count == 1:
+            w = words[start]
+            return w + ' '*(maxWidth - len(w))
+
+        # left justify last line with only one space between each word (no extra
+        # space)
+        if end >= len(words):
+            line = ' '.join([words[i] for i in range(start, end)])
+            return line + ' '*(maxWidth-len(line))
+
+        line = words[start]
+        words_left = end - start - 1
+        space_left = maxWidth - sum([len(words[i]) for i in range(start, end)])
+        for i in range(start+1, end):
+            spaces = ceil(space_left/words_left)
+            space_left -= spaces
+            words_left -= 1
+            line += ' '*spaces + words[i]
+
+        return line
 
 
 def main():
-    pass
+    words = ["This", "is", "an", "example", "of", "text", "justification."]
+    output = [
+        "This    is    an",
+        "example  of text",
+        "justification.  "
+    ]
+    assert Solution().fullJustify(words, 16) == output
+
+    words = ["What", "must", "be", "acknowledgment", "shall", "be"]
+    output = [
+        "What   must   be",
+        "acknowledgment  ",
+        "shall be        "
+    ]
+    assert Solution().fullJustify(words, 16) == output
+
+    words = [
+        "Science", "is", "what", "we", "understand", "well", "enough", "to",
+        "explain", "to", "a", "computer.", "Art", "is", "everything", "else",
+        "we", "do"]
+
+    output = [
+        "Science  is  what we",
+        "understand      well",
+        "enough to explain to",
+        "a  computer.  Art is",
+        "everything  else  we",
+        "do                  "
+    ]
+    assert Solution().fullJustify(words, 20) == output
 
 
 main()
