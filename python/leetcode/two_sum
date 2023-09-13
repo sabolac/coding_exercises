@@ -132,7 +132,7 @@ def main():
             result = f(nums, nums[i] + nums[j])
             total_time += time.perf_counter() - start
             assert result == [i, j]
-        print(f'{f.__name__}:{total_time=}')
+        print(f'{f.__name__}:{total_time=:.3f}')
 
 
 main()
