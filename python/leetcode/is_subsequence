@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/is-subsequence
+
+Given two strings s and t, return true if s is a subsequence of t, or false
+otherwise.
+
+A subsequence of a string is a new string that is formed from the original
+string by deleting some (can be none) of the characters without disturbing the
+relative positions of the remaining characters. (i.e., "ace" is a subsequence of
+"abcde" while "aec" is not).
+
+
+
+Example 1:
+
+Input: s = "abc", t = "ahbgdc"
+Output: true
+
+
+Example 2:
+
+Input: s = "axc", t = "ahbgdc"
+Output: false
+
+
+Constraints:
+
+0 <= s.length <= 100
+0 <= t.length <= 10^4
+s and t consist only of lowercase English letters.
+
+
+Follow up: Suppose there are lots of incoming s, say s1, s2, ..., sk where k >=
+10^9, and you want to check one by one to see if t has its subsequence. In this
+scenario, how would you change your code?
+"""
+
+from typing import Iterable, List
+from bisect import bisect
+
+
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        if not s:
+            return True
+        if not t:
+            return False
+
+        N = len(t)
+        i = 0
+
+        for c in s:
+            for j in range(i, N):
+                if t[j] == c:
+                    i = j + 1
+                    break
+            else:
+                return False
+
+        return True
+
+    def isSubsequenceMulti(self, words: Iterable[str], t: str) -> List[bool]:
+        """
+        This version is optimized for querying large number of words against t
+        for subsequence check
+        """
+        # map each char of t to its list of index of occurrence in t in sorted
+        # order so we can do binary search given a letter from a word in words
+        c_2_i = {}
+        for i, c in enumerate(t):
+            if c in c_2_i:
+                c_2_i[c].append(i)
+            else:
+                c_2_i[c] = [i]
+
+        for w in words:
+            # for each char c in w, if there is an index greater than i in
+            # c_2_i[c], w is a subsequence of t
+            i = -1
+            for c in w:
+                if c not in c_2_i:
+                    yield False
+                    break
+                l = c_2_i[c]
+                x = bisect(l, i)
+                if x == len(l):
+                    yield False
+                    break
+                i = l[x]
+            else:
+                yield True
+
+
+def main():
+
+    assert Solution().isSubsequence(s="abc", t="ahbgdc")
+    assert not Solution().isSubsequence(s="axc", t="ahbgdc")
+
+    t = "abcdefg"
+    d = {
+        "": True,
+        "a": True,
+        "e": True,
+        "g": True,
+        "ag": True,
+        "fg": True,
+        "abc": True,
+        "bce": True,
+        "bg": True,
+        "cfg": True,
+        "bdfg": True,
+        "abcdef": True,
+        "bcdefg": True,
+        "abcdefg": True,
+        "x": False,
+        "abx": False,
+        "xab": False,
+        "bdc": False,
+        "abcdx": False,
+        "abcdefgx": False,
+        "abcdxefg": False,
+        "xabcdefg": False,
+    }
+    assert list(Solution().isSubsequenceMulti(
+        d.keys(), t)) == list(d.values())
+
+
+main()
