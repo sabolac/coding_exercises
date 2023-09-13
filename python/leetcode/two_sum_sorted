@@ -61,9 +61,15 @@ import random
 class Solution:
     def twoSum(self, numbers: List[int], target: int) -> List[int]:
         """ O(logn) time complexity, O(1) space """
+        N = len(numbers)
+        j = N - 1
         for i, v1 in enumerate(numbers):
             v2 = target - v1
-            j = bisect(numbers, v2, lo=i+1)-1
+            # note that we set hi=j+1 as we do not need to search till the end
+            # each time. Since the numbers are sorted, when we increment i, the
+            # corresponding candidate we are looking for will be further below
+            # at an index less than j+1
+            j = bisect(numbers, v2, lo=i+1, hi=j+1)-1
             if numbers[j] == v2 and j != i:
                 return [i+1, j+1]
 
@@ -82,7 +88,8 @@ def generate_test_case(list_size=100):
     j = random.randrange(i+1, list_size)
 
     # make sure i, j is the guaranteed result, every other number is multiple of
-    # 10, so only these will add up to some number that ends with 2 (1+1)
+    # 10 (i*10 above), so only these will add up to a number that ends with 2
+    # (1+1)
     random_list[i] += 1
     random_list[j] += 1
 
@@ -96,7 +103,7 @@ def main():
     assert Solution().twoSum([2, 3, 3, 5], 6) == [2, 3]
     assert Solution().twoSum([-1, 0], -1) == [1, 2]
 
-    for _ in range(500):
+    for _ in range(10**3):
         nums, i, j = generate_test_case(10**3)
         assert Solution().twoSum(nums, nums[i] + nums[j]) == [i+1, j+1]
 

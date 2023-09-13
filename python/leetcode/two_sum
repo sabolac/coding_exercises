@@ -63,9 +63,14 @@ def two_sum_fast(nums: List[int], target: int) -> List[int]:
 
     # make a copy of the original list and sort it in O(nlogn)
     sorted_nums = sorted([(v, i) for i, v in enumerate(nums)])
+    j = len(sorted_nums)
     for i, (v1, k) in enumerate(sorted_nums):
         v2 = target - v1
-        j = binary_search(sorted_nums, v2, lo=i+1, key=lambda x: x[0])
+        # note that we set hi=j as we do not need to search till the end each
+        # time. Since the numbers are sorted, when we increment i, the
+        # corresponding candidate we are looking for will be further below at an
+        # index less than j
+        j = binary_search(sorted_nums, v2, lo=i+1, hi=j, key=lambda x: x[0])
         v, p = sorted_nums[j-1]
         if v == v2 and j != i:
             return [k, p]
