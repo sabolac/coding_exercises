@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/3sum
+
+
+Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]]
+such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
+
+Notice that the solution set must not contain duplicate triplets.
+
+
+
+Example 1:
+
+Input: nums = [-1,0,1,2,-1,-4]
+Output: [[-1,-1,2],[-1,0,1]]
+Explanation:
+nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0.
+nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0.
+nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0.
+The distinct triplets are [-1,0,1] and [-1,-1,2].
+Notice that the order of the output and the order of the triplets does not matter.
+
+
+Example 2:
+
+Input: nums = [0,1,1]
+Output: []
+Explanation: The only possible triplet does not sum up to 0.
+
+
+Example 3:
+
+Input: nums = [0,0,0]
+Output: [[0,0,0]]
+Explanation: The only possible triplet sums up to 0.
+
+
+Constraints:
+
+3 <= nums.length <= 3000
+-10^5 <= nums[i] <= 10^5
+"""
+
+
+from typing import List, Tuple, Mapping
+
+
+class Solution:
+    def three_sum(self, nums: List[int]) -> List[List[int]]:
+        result = []
+
+        zero_count = 0
+        n = {}  # negatives and their counts for multiple occurrences
+        p = {}  # positives and their counts for multiple occurrences
+
+        for v in nums:
+            if v == 0:
+                zero_count += 1
+            elif v > 0:
+                p[v] = p.get(v, 0) + 1
+            else:  # negative (store as positive for ease of cross checking)
+                n[-v] = n.get(-v, 0) + 1
+
+        # if we have at least 1 zero, we can have triplets like [-x, 0, x]
+        if zero_count > 0:
+            for x in n:
+                if x in p:
+                    result.append([-x, 0, x])
+            # account for multiple zeros
+            if zero_count >= 3:
+                result.append([0, 0, 0])
+
+        # case [-x, -y, x+y] where x != y and [-x, -x, 2x]
+        for target in p:
+            for (x, y) in self.two_sum(n, target):
+                result.append([-x, -y, target])
+
+        # case [-x-y, x, y] where x != y and [-2x, x, x]
+        for target in n:
+            for (x, y) in self.two_sum(p, target):
+                result.append([-target, x, y])
+
+        return result
+
+    def two_sum(self, d: Mapping, target: int) -> List[Tuple]:
+        result = []
+        for v1, c in d.items():
+            v2 = target - v1
+
+            # only include unique pairs, since we want unique triplets
+            # (-5, 2, 3) and (-5, 3, 2) is the same, so just pick ones for which
+            # v1 <= v2. This covers the case where v1 >= target
+            if v1 > v2:
+                continue
+
+            if (v1 == v2 and c > 1) or (v1 != v2 and v2 in d):
+                result.append((v1, v2))
+
+        return result
+
+
+def main():
+    assert Solution().three_sum([0, 1, 1]) == []
+    assert Solution().three_sum([0, 0, 0]) == [[0, 0, 0]]
+    assert Solution().three_sum([-1, 0, 1, 2, -1, -4]
+                                ) == [[-1, 0, 1], [-1, -1, 2]]
+
+
+main()
