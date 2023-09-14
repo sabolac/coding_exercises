@@ -103,7 +103,7 @@ class Solution:
 
         return result
 
-    def findSubstring(self, s: str, words: List[str]) -> List[int]:
+    def findSubstring_queue(self, s: str, words: List[str]) -> List[int]:
         if not s or not words:
             return []
 
@@ -141,7 +141,11 @@ class Solution:
 
         return result
 
-    def findSubstring_notsure(self, s: str, words: List[str]) -> List[int]:
+    # this is the same logic as findSubstring_queue but without using an
+    # explicit queue. Since queue is the same as the current run of the
+    # substring, there is no need for a separate queue. The queue is simulated
+    # by the index i, poping from left happens in the while loop
+    def findSubstring(self, s: str, words: List[str]) -> List[int]:
         if not s or not words:
             return []
 
