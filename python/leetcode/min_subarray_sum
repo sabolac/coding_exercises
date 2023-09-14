@@ -49,31 +49,46 @@ from typing import List
 class Solution:
     def minSubArrayLen(self, target: int, nums: List[int]) -> int:
         N = len(nums)
-        i = j = subarray_length = current_sum = 0
+        l = r = subarray_length = current_sum = 0
 
         # find the initial run of subarray from the start that adds up to target
-        while j < N and current_sum < target:
-            current_sum += nums[j]
-            j += 1
+        while r < N and current_sum < target:
+            current_sum += nums[r]
+            r += 1
         if current_sum >= target:
-            subarray_length = j - i
+            subarray_length = r - l
 
         # remove as many elements from the left to keep the sum above target and
         # move the right end of the subarray towards the end adding one more
         # element at each step
         while True:
-            while i < j and (current_sum - nums[i] >= target):
-                current_sum -= nums[i]
-                i += 1
-            subarray_length = min(subarray_length, j-i)
+            while l < r and (current_sum - nums[l] >= target):
+                current_sum -= nums[l]
+                l += 1
+            subarray_length = min(subarray_length, r-l)
 
-            if j < N:
-                current_sum += nums[j]
-                j += 1
+            if r < N:
+                current_sum += nums[r]
+                r += 1
             else:
                 break
 
         return subarray_length
+
+    def minSubArrayLen2(self, target: int, nums: List[int]) -> int:
+        N = len(nums)
+        subarray_length = N+1
+        current_sum = l = r = 0
+
+        while r < N:
+            current_sum += nums[r]
+            while current_sum >= target:
+                subarray_length = min(subarray_length, r-l+1)
+                current_sum -= nums[l]
+                l += 1
+            r += 1
+
+        return subarray_length if subarray_length <= N else 0
 
 
 def main():
