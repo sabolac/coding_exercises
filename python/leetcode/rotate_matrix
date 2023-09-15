@@ -1,0 +1,154 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/rotate-image
+
+
+Rotate Image
+
+You are given an n x n 2D matrix representing an image, rotate the image by 90
+degrees (clockwise).
+
+You have to rotate the image in-place, which means you have to modify the input
+2D matrix directly. DO NOT allocate another 2D matrix and do the rotation.
+
+
+Example 1:
+
+
+Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]
+Output: [[7,4,1],[8,5,2],[9,6,3]]
+
+
+Example 2:
+
+
+Input: matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]
+Output: [[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+
+
+Constraints:
+
+n == matrix.length == matrix[i].length
+1 <= n <= 20
+"""
+
+
+from typing import List
+
+from pprint import pp
+
+
+class Solution:
+    def rotate(self, matrix: List[List[int]]) -> None:
+        """
+        Modify matrix in-place
+        """
+        start = 0
+        end = len(matrix) - 1
+        while start < end:
+            self.rotate_square(matrix, start, end)
+            start += 1
+            end -= 1
+
+    def rotate_square(self, matrix: List[List[int]], s, e) -> None:
+        for i in range(s, e):
+            j = -i - 1
+            matrix[s][i], matrix[i][e] = matrix[i][e], matrix[s][i]
+            matrix[s][i], matrix[e][j] = matrix[e][j], matrix[s][i]
+            matrix[s][i], matrix[j][s] = matrix[j][s], matrix[s][i]
+
+    # this one is also equivalent to rotate_square
+    def rotate_square1(self, matrix: List[List[int]], s, e) -> None:
+        for i in range(s, e):
+            j = -i - 1
+            temp = matrix[s][i]
+            temp, matrix[i][e] = matrix[i][e], temp
+            temp, matrix[e][j] = matrix[e][j], temp
+            temp, matrix[j][s] = matrix[j][s], temp
+            matrix[s][i] = temp
+
+    def rotate_simpler(self, matrix: List[List[int]]) -> None:
+        """
+        Modify matrix in-place
+        """
+        # first reverse rows
+        n = len(matrix)
+        l = 0
+        r = n - 1
+        while l < r:
+            matrix[l], matrix[r] = matrix[r], matrix[l]
+            l += 1
+            r -= 1
+
+        # then transpose
+        for i in range(n):
+            for j in range(i):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+
+
+def compare_matrix(m1: List[List[int]], m2: List[List[int]]) -> bool:
+    if len(m1) != len(m2):
+        return False
+
+    for r1, r2 in zip(m1, m2):
+        if r1 != r2:
+            return False
+
+    return True
+
+
+def main():
+
+    matrix = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+    ]
+
+    output = [
+        [7, 4, 1],
+        [8, 5, 2],
+        [9, 6, 3],
+    ]
+    Solution().rotate(matrix)
+    assert compare_matrix(matrix, output)
+
+    matrix = [
+        [5,   1,  9, 11],
+        [2,   4,  8, 10],
+        [13,  3,  6,  7],
+        [15, 14, 12, 16]
+    ]
+    output = [
+        [15, 13,  2,  5],
+        [14,  3,  4,  1],
+        [12,  6,  8,  9],
+        [16,  7, 10, 11]
+    ]
+    Solution().rotate(matrix)
+    assert compare_matrix(matrix, output)
+
+    matrix = [
+        [1,   2,  3,  4,  5,  6],
+        [7,   8,  9, 10, 11, 12],
+        [13, 14, 15, 16, 17, 18],
+        [19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30],
+        [31, 32, 33, 34, 35, 36],
+    ]
+
+    output = [
+        [31, 25, 19, 13,  7, 1],
+        [32, 26, 20, 14,  8, 2],
+        [33, 27, 21, 15,  9, 3],
+        [34, 28, 22, 16, 10, 4],
+        [35, 29, 23, 17, 11, 5],
+        [36, 30, 24, 18, 12, 6],
+    ]
+    Solution().rotate(matrix)
+    assert compare_matrix(matrix, output)
+
+
+main()
