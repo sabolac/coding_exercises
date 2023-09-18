@@ -70,7 +70,7 @@ class Solution:
         m1 = {}
         m2 = {}
         for k, (i, j) in enumerate(zip(s, t)):
-            if m1.get(i, -1) != m2.get(j, -1):
+            if m1.get(i, k) != m2.get(j, k):
                 return False
             m1[i] = m2[j] = k
 
