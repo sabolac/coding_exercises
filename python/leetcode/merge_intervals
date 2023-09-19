@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/merge-intervals
+
+
+Merge Intervals
+
+Given an array of intervals where intervals[i] = [starti, endi], merge all
+overlapping intervals, and return an array of the non-overlapping intervals that
+cover all the intervals in the input.
+
+
+
+Example 1:
+
+Input: intervals = [[1,3],[2,6],[8,10],[15,18]]
+Output: [[1,6],[8,10],[15,18]]
+Explanation: Since intervals [1,3] and [2,6] overlap, merge them into [1,6].
+
+
+Example 2:
+
+Input: intervals = [[1,4],[4,5]]
+Output: [[1,5]]
+Explanation: Intervals [1,4] and [4,5] are considered overlapping.
+
+
+Constraints:
+
+1 <= intervals.length <= 10^4
+intervals[i].length == 2
+0 <= starti <= endi <= 10^4
+"""
+
+
+from typing import List
+
+
+class Solution:
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        result = []
+
+        if len(intervals) == 0:
+            return result
+
+        intervals.sort()
+        l, r = intervals[0]
+        for ln, rn in intervals:
+            if ln > r:
+                result.append([l, r])
+                l, r = ln, rn
+            else:
+                r = max(r, rn)
+
+        result.append([l, r])
+        return result
+
+
+def main():
+    intervals = [[1, 3], [2, 6], [8, 10], [15, 18]]
+    output = [[1, 6], [8, 10], [15, 18]]
+    assert Solution().merge(intervals) == output
+
+    intervals = [[1, 4], [4, 5]]
+    output = [[1, 5]]
+    assert Solution().merge(intervals) == output
+
+
+    intervals = [[361,369],[146,153],[302,302],[317,322],[73,88],[440,448],[182,183],[123,130],[440,448],[147,154],[241,253],[226,242],[387,400],[392,398],[444,445],[106,112],[81,86],[325,329],[317,331],[489,500],[170,172],[451,463],[495,501],[312,320],[466,477],[435,443],[455,457],[56,59],[415,423],[61,72],[70,77],[17,28],[272,274],[387,397],[189,198],[333,352],[11,15],[63,69],[211,226],[294,303],[39,49],[237,251],[244,250],[337,348],[94,112],[222,238],[418,430],[20,30],[286,293],[132,147],[136,153],[186,193],[454,464],[6,23],[477,489],[46,62],[234,238],[11,21],[430,430],[341,357],[451,467],[393,402],[360,373],[411,429],[320,324],[474,483],[361,373],[308,323],[262,276],[332,344],[319,330],[460,473],[15,18],[384,401],[24,41],[173,188],[493,511],[196,209],[331,338],[204,208],[151,169],[165,170],[190,203],[32,37],[288,305],[249,256],[448,457],[12,27],[33,49],[112,121],[474,491],[236,255],[56,68],[25,44],[39,48],[95,98],[259,259],[260,269],[234,238],[106,120],[361,368],[333,334],[417,422],[476,478],[94,94],[63,63],[430,449],[239,257]]
+    output = [[6,88],[94,121],[123,130],[132,172],[173,209],[211,257],[259,259],[260,276],[286,305],[308,357],[360,373],[384,402],[411,511]]
+    assert Solution().merge(intervals) == output
+
+main()
