@@ -45,9 +45,10 @@ Every number and running calculation will fit in a signed 32-bit integer.
 
 class Solution:
     def calculate(self, s: str) -> int:
-        neg = False
-        pc = 0  # parenthesis count
-        prev = ""
+        neg = False  # are we in a negative context, i.e -(...)?
+        pc = 0  # unclosed parenthesis count
+        prev = ""  # previous item
+        # keep track of negative contexts not yet closed
         stack = []
         total = 0
 
