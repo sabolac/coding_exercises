@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/remove-nth-node-from-end-of-list
+
+Remove Nth Node From End of List
+
+Given the head of a linked list, remove the nth node from the end of the list
+and return its head.
+
+
+Example 1:
+
+
+Input: head = [1,2,3,4,5], n = 2
+Output: [1,2,3,5]
+
+
+Example 2:
+
+Input: head = [1], n = 1
+Output: []
+
+
+Example 3:
+
+Input: head = [1,2], n = 1
+Output: [1]
+
+
+Constraints:
+
+The number of nodes in the list is sz.
+1 <= sz <= 30
+0 <= Node.val <= 100
+1 <= n <= sz
+
+
+Follow up: Could you do this in one pass?
+"""
+
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode | None, n: int) -> ListNode | None:
+        if not head:
+            return head
+
+        c = head  # current
+        while n > 0 and c.next:
+            c = c.next
+            n -= 1
+
+        # removing head node
+        if n > 0:
+            head = head.next
+            return head
+
+        p = head  # previous
+        while c.next:
+            c = c.next
+            p = p.next
+
+        p.next = p.next.next
+        return head
+
+
+def to_list(n):
+    l = []
+    while n:
+        l.append(n.val)
+        n = n.next
+
+    return l
+
+
+def from_list(l: list[int]) -> ListNode | None:
+    head = ListNode()
+    n = head
+    for i in l:
+        n.next = ListNode(i)
+        n = n.next
+    head = head.next
+    return head
+
+
+def main():
+    head = from_list([1, 2, 3, 4, 5])
+    output = [1, 2, 3, 4]
+    assert to_list(Solution().removeNthFromEnd(head, 1)) == output
+
+    head = from_list([1, 2, 3, 4, 5])
+    output = [1, 2, 3, 5]
+    assert to_list(Solution().removeNthFromEnd(head, 2)) == output
+
+    head = from_list([1, 2, 3, 4, 5])
+    output = [1, 2, 4, 5]
+    assert to_list(Solution().removeNthFromEnd(head, 3)) == output
+
+    head = from_list([1, 2, 3, 4, 5])
+    output = [1, 3, 4, 5]
+    assert to_list(Solution().removeNthFromEnd(head, 4)) == output
+
+    head = from_list([1, 2, 3, 4, 5])
+    output = [2, 3, 4, 5]
+    assert to_list(Solution().removeNthFromEnd(head, 5)) == output
+
+    head = from_list([1, 2, 3, 4, 5])
+    output = [2, 3, 4, 5]
+    assert to_list(Solution().removeNthFromEnd(head, 6)) == output
+
+    head = from_list([1])
+    output = []
+    assert to_list(Solution().removeNthFromEnd(head, 1)) == output
+
+    head = from_list([1, 2])
+    output = [1]
+    assert to_list(Solution().removeNthFromEnd(head, 1)) == output
+
+
+main()
