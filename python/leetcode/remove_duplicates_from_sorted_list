@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii
+
+Remove Duplicates from Sorted List II
+
+Given the head of a sorted linked list, delete all nodes that have duplicate
+numbers, leaving only distinct numbers from the original list. Return the linked
+list sorted as well.
+
+
+Example 1:
+
+Input: head = [1,2,3,3,4,4,5]
+Output: [1,2,5]
+
+
+Example 2:
+
+Input: head = [1,1,1,2,3]
+Output: [2,3]
+
+
+Constraints:
+
+The number of nodes in the list is in the range [0, 300].
+-100 <= Node.val <= 100
+The list is guaranteed to be sorted in ascending order.
+"""
+
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+class Solution:
+    def deleteDuplicates(self, head: ListNode | None) -> ListNode | None:
+        if not head:
+            return head
+
+        start = ListNode(val=head.val-1, next=head)
+        c = head
+        p = start
+
+        while c:
+            while c.next and c.val != c.next.val:
+                p = c
+                c = c.next
+            v = c.val
+            while c and c.val == v:
+                c = c.next
+            if p.next.next:
+                p.next = c
+
+        return start.next
+
+
+def to_list(n):
+    l = []
+    while n:
+        l.append(n.val)
+        n = n.next
+
+    return l
+
+
+def from_list(l: list[int]) -> ListNode | None:
+    head = ListNode()
+    n = head
+    for i in l:
+        n.next = ListNode(i)
+        n = n.next
+    head = head.next
+    return head
+
+
+def main():
+    head = from_list([1, 2, 3, 3, 4, 4, 5])
+    output = [1, 2, 5]
+    result = to_list(Solution().deleteDuplicates(head))
+    assert result == output
+
+    head = from_list([1, 1, 1, 2, 3, 3, 4, 4, 5])
+    output = [2, 5]
+    result = to_list(Solution().deleteDuplicates(head))
+    assert result == output
+
+    head = from_list([1, 1, 1, 2, 3, 3, 4, 4, 5, 5])
+    output = [2]
+    result = to_list(Solution().deleteDuplicates(head))
+    assert result == output
+
+    head = from_list([1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5])
+    output = []
+    result = to_list(Solution().deleteDuplicates(head))
+    assert result == output
+
+    head = from_list([1, 1, 1, 2, 3])
+    output = [2, 3]
+    result = to_list(Solution().deleteDuplicates(head))
+    assert result == output
+
+
+main()
