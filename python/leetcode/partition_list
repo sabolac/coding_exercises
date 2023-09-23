@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+
+"""
+Ref: https://leetcode.com/problems/partition-list
+
+Partition List
+
+Given the head of a linked list and a value x, partition it such that all nodes
+less than x come before nodes greater than or equal to x.
+
+You should preserve the original relative order of the nodes in each of the two
+partitions.
+
+Example 1:
+
+Input: head = [1,4,3,2,5,2], x = 3
+Output: [1,2,2,4,3,5]
+
+Example 2:
+
+Input: head = [2,1], x = 2
+Output: [1,2]
+
+
+Constraints:
+
+The number of nodes in the list is in the range [0, 200].
+-100 <= Node.val <= 100
+-200 <= x <= 200
+"""
+
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+def to_list(n):
+    l = []
+    while n:
+        l.append(n.val)
+        n = n.next
+
+    return l
+
+
+def from_list(l: list[int]) -> ListNode | None:
+    head = ListNode()
+    n = head
+    for i in l:
+        n.next = ListNode(i)
+        n = n.next
+    head = head.next
+    return head
+
+
+class Solution:
+    def partition(self, head: ListNode | None, x: int) -> ListNode | None:
+        # nothing to do for lists of 1 or no node
+        if not head or not head.next:
+            return head
+
+        l_head = l = ListNode()  # left list for all nodes < x
+        r_head = r = ListNode()  # right list for all nodes >= x
+
+        c = head
+        while c:
+            # append to left list if < x
+            if c.val < x:
+                l.next = c
+                l = c
+            # append to right list if >= x
+            else:
+                r.next = c
+                r = c
+            c = c.next
+
+        # terminate the right list
+        r.next = None
+        # connect the left and right lists
+        l.next = r_head.next
+        # return the first node of the left list as new head
+        return l_head.next
+
+
+def main():
+    head = from_list([2, 1])
+    output = [1, 2]
+    assert to_list(Solution().partition(head, 2)) == output
+
+    head = from_list([1, 4, 3, 2, 5, 2])
+    output = [1, 2, 2, 4, 3, 5]
+    assert to_list(Solution().partition(head, 3)) == output
+
+
+main()
