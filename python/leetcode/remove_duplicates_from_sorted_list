@@ -47,12 +47,17 @@ class Solution:
         p = start
 
         while c:
+            # move until we have a duplicate
             while c.next and c.val != c.next.val:
                 p = c
                 c = c.next
+
+            # move ahead of the duplicates if any
             v = c.val
             while c and c.val == v:
                 c = c.next
+
+            # link p to c cutting out the duplicates in between
             if p.next.next:
                 p.next = c
 
