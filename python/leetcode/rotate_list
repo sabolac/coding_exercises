@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+
+"""
+Ref: https://leetcode.com/problems/rotate-list
+
+Rotate List
+
+Given the head of a linked list, rotate the list to the right by k places.
+
+
+
+Example 1:
+
+Input: head = [1,2,3,4,5], k = 2
+Output: [4,5,1,2,3]
+
+
+Example 2:
+
+Input: head = [0,1,2], k = 4
+Output: [2,0,1]
+
+
+Constraints:
+
+The number of nodes in the list is in the range [0, 500].
+-100 <= Node.val <= 100
+0 <= k <= 2 * 10%9
+"""
+
+
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+def to_list(n):
+    l = []
+    while n:
+        l.append(n.val)
+        n = n.next
+
+    return l
+
+
+def from_list(l: list[int]) -> ListNode | None:
+    head = ListNode()
+    n = head
+    for i in l:
+        n.next = ListNode(i)
+        n = n.next
+    head = head.next
+    return head
+
+
+class Solution:
+    def rotateRight(self, head: ListNode | None, k: int) -> ListNode | None:
+        # nothing to do for a list of 1 or no node
+        if k == 0 or not head or not head.next:
+            return head
+
+        i = 1
+        c = head
+        while c.next and i < k:
+            c = c.next
+            i += 1
+
+        # k <= node count
+        if i == k:
+            # if already at the last node, we have a total of k nodes, so
+            # nothing to do
+            if not c.next:
+                return head
+
+            b = head
+            c = c.next
+            while c.next:
+                b = b.next
+                c = c.next
+            new_head = b.next
+            b.next = None
+            c.next = head
+            return new_head
+        # node count = i < k
+        return self.rotateRight(head, k % i)
+
+
+def main():
+    head = from_list([1, 2, 3, 4, 5])
+    output = [4, 5, 1, 2, 3]
+    assert to_list(Solution().rotateRight(head, 2)) == output
+
+    head = from_list([1, 2, 3, 4, 5])
+    output = [4, 5, 1, 2, 3]
+    assert to_list(Solution().rotateRight(head, 7)) == output
+
+    head = from_list([0, 1, 2])
+    output = [2, 0, 1]
+    assert to_list(Solution().rotateRight(head, 4)) == output
+
+    head = from_list([1, 2, 3, 4, 5])
+    output = [1, 2, 3, 4, 5]
+    assert to_list(Solution().rotateRight(head, 5)) == output
+
+    head = from_list([1, 2, 3, 4, 5])
+    output = [1, 2, 3, 4, 5]
+    assert to_list(Solution().rotateRight(head, 10)) == output
+
+    head = from_list([1, 2, 3, 4, 5])
+    output = [2, 3, 4, 5, 1]
+    assert to_list(Solution().rotateRight(head, 4)) == output
+
+
+main()
