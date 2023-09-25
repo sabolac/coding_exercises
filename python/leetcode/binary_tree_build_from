@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal
+
+Construct Binary Tree from Preorder and Inorder Traversal
+
+Given two integer arrays preorder and inorder where preorder is the preorder
+traversal of a binary tree and inorder is the inorder traversal of the same
+tree, construct and return the binary tree.
+
+Example 1:
+
+Input: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+Output: [3,9,20,null,null,15,7]
+
+
+Example 2:
+
+Input: preorder = [-1], inorder = [-1]
+Output: [-1]
+
+
+Constraints:
+
+1 <= preorder.length <= 3000
+inorder.length == preorder.length
+-3000 <= preorder[i], inorder[i] <= 3000
+preorder and inorder consist of unique values.
+Each value of inorder also appears in preorder.
+preorder is guaranteed to be the preorder traversal of the tree.
+inorder is guaranteed to be the inorder traversal of the tree.
+"""
+
+
+from typing import Self
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+    @staticmethod
+    def to_list(root: Self | None) -> list[int]:
+        if not root:
+            return []
+
+        l = []
+        q = deque()
+        q.append(root)
+
+        while q:
+            n = q.popleft()
+            if n:
+                l.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+            else:
+                l.append(None)
+
+        # clean up the empty (None) nodes at the tail of last level
+        i = len(l)-1
+        while i >= 0 and l[i] is None:
+            i -= 1
+
+        return l[:i+1] if i >= 0 else []
+
+
+class Solution:
+    """
+    The intuition is as follows:
+
+    preorder and inorder traversals are in the following forms:
+        preorder: v|left1|right1
+        inorder:  left2|v|right2
+    where v is the value of the root.
+
+    Here since all the items are guaranteed to be unique by the problem
+    definition, we know that when we find v (the first item of preorder) inside
+    inorder, we know that the set of items in left1 and left2, and also right1
+    and right2 are equal (although in different order, pre and in order)
+
+    So the first item of preorder list partitions the inorder list into left and
+    right subtree values. And note that left1 and left2 (as well as right1 and
+    right2 are of equal size) since they represent the same subtrees. So we use
+    this fact to find the start index of right1 in preorder
+
+    Thus, at each step we find v in inorder, and find the boundary of the left
+    and right subtrees  in each list and recursively construct the right and
+    left subtree
+    """
+
+    def buildTree(self, preorder: list[int], inorder: list[int]) -> TreeNode | None:
+        return self.build_tree(preorder, 0, len(preorder)-1,
+                               inorder, 0, len(inorder)-1)
+
+    def build_tree(self,
+                   preord: list[int], l1: int, h1: int,
+                   inord: list[int], l2: int, h2: int) -> TreeNode | None:
+
+        # there is no left subtree when iv == l2
+        #   preorder: v|right1
+        #   inorder:  v|right2
+        # there is no right subtree when iv == h2
+        #   preorder: v|left1
+        #   inorder:  left2|v
+        # in both those cases l2 > h2 holds
+        if l2 > h2:
+            return None
+
+        v = preord[l1]
+        r = TreeNode(v)
+
+        # there is only one node, return it
+        if l1 == h1:
+            return r
+
+        # general case:
+        # preorder: v|left1|right1
+        # inorder:  left2|v|right2
+        iv = inord.index(v)
+        len_left = iv-l2
+
+        r.left = self.build_tree(preord, l1+1, l1+len_left, inord, l2, iv-1)
+        r.right = self.build_tree(preord, l1+len_left+1, h1, inord, iv+1, h2)
+
+        return r
+
+    def buildTree_slower(self, preorder: list[int], inorder: list[int]) -> TreeNode | None:
+        """
+        This version is simpler however wastes a lot of memory by creating new
+        list slices of the lists at each recursive call
+        """
+        if not preorder or not inorder:
+            return None
+
+        v = preorder[0]
+        root = TreeNode(v)
+        idx_v = inorder.index(v)
+
+        left1 = preorder[1:idx_v+1]
+        left2 = inorder[:idx_v]
+        root.left = self.buildTree(left1, left2)
+
+        right1 = preorder[idx_v+1:]
+        right2 = inorder[idx_v+1:]
+        root.right = self.buildTree(right1, right2)
+
+        return root
+
+
+def main():
+    preorder = [3, 9, 20, 15, 7]
+    inorder = [9, 3, 15, 20, 7]
+    output = [3, 9, 20, None, None, 15, 7]
+    assert TreeNode.to_list(Solution().buildTree(preorder, inorder)) == output
+
+    preorder = [-1]
+    inorder = [-1]
+    output = [-1]
+    assert TreeNode.to_list(Solution().buildTree(preorder, inorder)) == output
+
+    preorder = [1, 2]
+    inorder = [1, 2]
+    output = [1, None, 2]
+    assert TreeNode.to_list(Solution().buildTree(preorder, inorder)) == output
+
+    preorder = [1, 2, 3]
+    inorder = [3, 2, 1]
+    output = [1, 2, None, 3]
+    assert TreeNode.to_list(Solution().buildTree(preorder, inorder)) == output
+
+    preorder = [3, 2, 1, 4]
+    inorder = [1, 2, 3, 4]
+    output = [3, 2, 4, 1]
+    assert TreeNode.to_list(Solution().buildTree(preorder, inorder)) == output
+
+    preorder = [4, 2, 1, 3]
+    inorder = [1, 2, 3, 4]
+    output = [4, 2, None, 1, 3]
+    assert TreeNode.to_list(Solution().buildTree(preorder, inorder)) == output
+
+
+main()
