@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/flatten-binary-tree-to-linked-list
+
+Flatten Binary Tree to Linked List
+
+Given the root of a binary tree, flatten the tree into a "linked list":
+
+The "linked list" should use the same TreeNode class where the right child
+pointer points to the next node in the list and the left child pointer is always
+None.
+
+The "linked list" should be in the same order as a pre-order traversal of the
+binary tree.
+
+
+Example 1:
+
+Input: root = [1,2,5,3,4,None,6]
+Output: [1,None,2,None,3,None,4,None,5,None,6]
+
+
+Example 2:
+
+Input: root = []
+Output: []
+
+
+Example 3:
+
+Input: root = [0]
+Output: [0]
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 2000].
+-100 <= Node.val <= 100
+
+Follow up: Can you flatten the tree in-place (with O(1) extra space)?
+"""
+
+
+from typing import Self
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None, next: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+    @staticmethod
+    def to_list(root: Self | None) -> list[int]:
+        if not root:
+            return []
+
+        l = []
+        q = deque()
+        q.append(root)
+
+        while q:
+            n = q.popleft()
+            if n:
+                l.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+            else:
+                l.append(None)
+
+        # clean up the empty (None) nodes at the tail of last level
+        i = len(l)-1
+        while i >= 0 and l[i] is None:
+            i -= 1
+
+        return l[:i+1] if i >= 0 else []
+
+
+class Solution:
+    def flatten_recursive(self, root: TreeNode | None) -> None:
+        """
+        Modify root in-place
+        """
+        if not root or not root.left and not root.right:
+            return root
+        if root.right:
+            self.flatten(root.right)
+        if root.left:
+            self.flatten(root.left)
+            left_tail = root.left
+            while left_tail.right:
+                left_tail = left_tail.right
+            left_tail.right = root.right
+            root.right = root.left
+            root.left = None
+
+    # non-recursive simpler/clever solution (not mine :-)
+    def flatten(self, root: TreeNode | None) -> None:
+        c = root
+        while c:
+            if c.left:
+                # find the right most node of left subtree and link it to the
+                # right child
+                right_most = c.left
+                while right_most.right:
+                    right_most = right_most.right
+                right_most.right = c.right
+
+                # make right point to left
+                c.right = c.left
+                c.left = None
+            c = c.right
+
+
+def main():
+    root = TreeNode.from_list([])
+    output = []
+    Solution().flatten(root)
+    assert TreeNode.to_list(root) == output
+
+    root = TreeNode.from_list([0])
+    output = [0]
+    Solution().flatten(root)
+    assert TreeNode.to_list(root) == output
+
+    root = TreeNode.from_list([1, 2, 5, 3, 4, None, 6])
+    output = [1, None, 2, None, 3, None, 4, None, 5, None, 6]
+    Solution().flatten(root)
+    assert TreeNode.to_list(root) == output
+
+
+main()
