@@ -1,0 +1,169 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii
+
+Populating Next Right Pointers in Each Node II
+
+Given a binary tree
+
+    struct Node {
+    int val;
+    Node *left;
+    Node *right;
+    Node *next;
+    }
+
+Populate each next pointer to point to its next right node. If there is no next
+right node, the next pointer should be set to NULL.
+
+Initially, all next pointers are set to NULL.
+
+
+Example 1:
+
+Input: root = [1,2,3,4,5,null,7]
+Output: [1,#,2,3,#,4,5,7,#]
+Explanation: Given the above binary tree (Figure A), your function should
+populate each next pointer to point to its next right node, just like in Figure
+B. The serialized output is in level order as connected by the next pointers,
+with '#' signifying the end of each level.
+
+
+Example 2:
+
+Input: root = []
+Output: []
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 6000].
+-100 <= Node.val <= 100
+
+
+Follow-up:
+
+You may only use constant extra space.
+The recursive approach is fine. You may assume implicit stack space does not
+count as extra space for this problem.
+"""
+
+
+from typing import Self
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None, next: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+        self.next = next
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+    @staticmethod
+    def to_list(root: Self | None) -> list[int]:
+        if not root:
+            return []
+
+        l = []
+        q = deque()
+        q.append(root)
+
+        while q:
+            n = q.popleft()
+            if n:
+                l.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+            else:
+                l.append(None)
+
+        # clean up the empty (None) nodes at the tail of last level
+        i = len(l)-1
+        while i >= 0 and l[i] is None:
+            i -= 1
+
+        return l[:i+1] if i >= 0 else []
+
+
+class Solution:
+    def connect_queue(self, root: TreeNode) -> TreeNode:
+        if not root:
+            return None
+
+        end_level = "|"
+
+        q = deque()
+
+        q.append(root)
+        q.append(end_level)
+        p = None
+        while True:
+            n = q.popleft()
+            if n == end_level:
+                if not q:
+                    return root
+                else:
+                    q.append(end_level)
+                    p = None
+            else:
+                if p:
+                    p.next = n
+                if n.left:
+                    q.append(n.left)
+                if n.right:
+                    q.append(n.right)
+                p = n
+
+    def connect(self, root: TreeNode) -> TreeNode:
+        c = root  # current node to process
+        start_of_level = TreeNode()  # dummy node to mark the start of a level
+
+        while c:
+            p = start_of_level  # previous node to link to next in line
+            while c:
+                for n in [c.left, c.right]:
+                    if n:
+                        p.next = n
+                        p = n
+                c = c.next
+
+            c = start_of_level.next  # move to next level and process each node
+            start_of_level.next = None
+
+        return root
+
+
+def main():
+    pass
+
+
+main()
