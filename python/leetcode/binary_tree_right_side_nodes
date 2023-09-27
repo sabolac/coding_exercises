@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/binary-tree-right-side-view
+
+Binary Tree Right Side View
+
+Given the root of a binary tree, imagine yourself standing on the right side of
+it, return the values of the nodes you can see ordered from top to bottom.
+
+
+Example 1:
+
+Input: root = [1,2,3,null,5,null,4]
+Output: [1,3,4]
+
+
+Example 2:
+
+Input: root = [1,null,3]
+Output: [1,3]
+
+
+Example 3:
+
+Input: root = []
+Output: []
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 100].
+-100 <= Node.val <= 100
+"""
+
+
+from typing import Self
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None, next: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+    @staticmethod
+    def to_list(root: Self | None) -> list[int]:
+        if not root:
+            return []
+
+        l = []
+        q = deque()
+        q.append(root)
+
+        while q:
+            n = q.popleft()
+            if n:
+                l.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+            else:
+                l.append(None)
+
+        # clean up the empty (None) nodes at the tail of last level
+        i = len(l)-1
+        while i >= 0 and l[i] is None:
+            i -= 1
+
+        return l[:i+1] if i >= 0 else []
+
+
+class Solution:
+    def rightSideView(self, root: TreeNode | None) -> list[int]:
+        def dfs(n, h):
+            if n:
+                if len(result) == h:
+                    result.append(n.val)
+                # recurse into right first so that the right most nodes at each
+                # level is visited first and thus added to the result
+                dfs(n.right, h + 1)
+                dfs(n.left, h + 1)
+
+        result = []
+        dfs(root, 0)
+        return result
+
+
+def main():
+    root = TreeNode.from_list([1, 2, 3, None, 5, None, 4])
+    output = [1, 3, 4]
+    assert Solution().rightSideView(root) == output
+
+    root = TreeNode.from_list([1, None, 3])
+    output = [1, 3]
+    assert Solution().rightSideView(root) == output
+
+    root = TreeNode.from_list([])
+    output = []
+    assert Solution().rightSideView(root) == output
+
+
+main()

@@ -43,7 +43,7 @@ The tree is guaranteed to be complete.
 """
 
 
-from typing import Self, Iterator
+from typing import Self
 from collections import deque
 
 

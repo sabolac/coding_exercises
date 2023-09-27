@@ -45,7 +45,7 @@ p and q will exist in the tree.
 """
 
 
-from typing import Self, Iterator
+from typing import Self
 from collections import deque
 
 
