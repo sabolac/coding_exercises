@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree
+
+Lowest Common Ancestor of a Binary Tree
+
+Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in
+the tree.
+
+According to the definition of LCA on Wikipedia: “The lowest common ancestor is
+defined between two nodes p and q as the lowest node in T that has both p and q
+as descendants (where we allow a node to be a descendant of itself).”
+
+
+Example 1:
+
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+Output: 3
+Explanation: The LCA of nodes 5 and 1 is 3.
+
+
+Example 2:
+
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+Output: 5
+Explanation: The LCA of nodes 5 and 4 is 5, since a node can be a descendant of
+itself according to the LCA definition.
+
+
+Example 3:
+
+Input: root = [1,2], p = 1, q = 2
+Output: 1
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [2, 105].
+-10^9 <= Node.val <= 10^9
+All Node.val are unique.
+p != q
+p and q will exist in the tree.
+"""
+
+
+from typing import Self, Iterator
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None, next: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+    @staticmethod
+    def to_list(root: Self | None) -> list[int]:
+        if not root:
+            return []
+
+        l = []
+        q = deque()
+        q.append(root)
+
+        while q:
+            n = q.popleft()
+            if n:
+                l.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+            else:
+                l.append(None)
+
+        # clean up the empty (None) nodes at the tail of last level
+        i = len(l)-1
+        while i >= 0 and l[i] is None:
+            i -= 1
+
+        return l[:i+1] if i >= 0 else []
+
+
+class Solution:
+    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        # search for p or q in the subtree at node n
+        def search(n):
+            # return once we find either p or q or n is None
+            if not n or n == p or n == q:
+                return n
+            left = search(n.left)  # LCA of p or q on left side
+            right = search(n.right)  # LCA of p or q on right side
+            # p and q are on opposite sides, return the parent
+            if left and right:
+                return n
+            return left or right  # Return whichever is the ancestor
+        return search(root)
+
+
+def main():
+    root = TreeNode.from_list([3, 5, 1, 6, 2, 0, 8, None, None, 7, 4])
+    p = root.left
+    q = root.right
+    assert Solution().lowestCommonAncestor(root, p, q) == root
+
+    root = TreeNode.from_list([3, 5, 1, 6, 2, 0, 8, None, None, 7, 4])
+    p = root.left
+    q = p.right.right
+    assert Solution().lowestCommonAncestor(root, p, q) == p
+
+    root = TreeNode.from_list([1, 2])
+    p = root
+    q = p.left
+    assert Solution().lowestCommonAncestor(root, p, q) == p
+
+
+main()
