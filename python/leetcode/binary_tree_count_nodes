@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/count-complete-tree-nodes
+
+Count Complete Tree Nodes
+
+Given the root of a complete binary tree, return the number of the nodes in the
+tree.
+
+According to Wikipedia, every level, except possibly the last, is completely
+filled in a complete binary tree, and all nodes in the last level are as far
+left as possible. It can have between 1 and 2h nodes inclusive at the last level
+h.
+
+Design an algorithm that runs in less than O(n) time complexity.
+
+
+Example 1:
+
+Input: root = [1,2,3,4,5,6]
+Output: 6
+
+
+Example 2:
+
+Input: root = []
+Output: 0
+
+
+Example 3:
+
+Input: root = [1]
+Output: 1
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 5 * 10^4].
+0 <= Node.val <= 5 * 10^4
+The tree is guaranteed to be complete.
+"""
+
+
+from typing import Self, Iterator
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None, next: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+    @staticmethod
+    def to_list(root: Self | None) -> list[int]:
+        if not root:
+            return []
+
+        l = []
+        q = deque()
+        q.append(root)
+
+        while q:
+            n = q.popleft()
+            if n:
+                l.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+            else:
+                l.append(None)
+
+        # clean up the empty (None) nodes at the tail of last level
+        i = len(l)-1
+        while i >= 0 and l[i] is None:
+            i -= 1
+
+        return l[:i+1] if i >= 0 else []
+
+
+class Solution:
+    def countNodes_slow(self, root: TreeNode | None) -> int:
+        q = deque([root])
+
+        total = 0
+        while q:
+            n = q.popleft()
+            if n:
+                total += 1
+                q.append(n.left)
+                q.append(n.right)
+
+        return total
+
+    def countNodes_fast(self, root: TreeNode | None) -> int:
+        left_height = right_height = 0
+        l = r = root
+
+        while l:
+            l = l.left
+            left_height += 1
+
+        while r:
+            r = r.right
+            right_height += 1
+
+        # the tree at root is a complete BST
+        if left_height == right_height:
+            return 2**left_height - 1
+
+        return 1 + self.countNodes(root.left) + self.countNodes(root.right)
+
+    def countNodes(self, root: TreeNode | None) -> int:
+        """
+        This improves on countNodes_fast by passing down the left or right
+        subtree heights that won't change in subsequent calls thus a
+        re-computation can be avoided in the sub-call.
+        """
+        return self.count_nodes(root)
+
+    def count_nodes(self, root: TreeNode | None, left_height: int = 0, right_height: int = 0) -> int:
+        if left_height == 0:
+            l = root
+            while l:
+                l = l.left
+                left_height += 1
+
+        if right_height == 0:
+            r = root
+            while r:
+                r = r.right
+                right_height += 1
+
+        # the tree at root is a complete BST
+        if left_height == right_height:
+            return 2**left_height - 1
+
+        return 1 + self.count_nodes(root.left, left_height=left_height-1) + \
+            self.count_nodes(root.right, right_height=right_height-1)
+
+
+def main():
+    root = TreeNode.from_list([1, 2, 3, 4, 5, 6, None])
+    assert Solution().countNodes(root) == 6
+
+    root = TreeNode.from_list([1])
+    assert Solution().countNodes(root) == 1
+
+    root = TreeNode.from_list([])
+    assert Solution().countNodes(root) == 0
+
+
+main()
