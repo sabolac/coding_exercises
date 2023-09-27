@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal
+
+Binary Tree Zigzag Level Order Traversal
+
+Given the root of a binary tree, return the zigzag level order traversal of its
+nodes' values. (i.e., from left to right, then right to left for the next level
+and alternate between).
+
+
+Example 1:
+
+Input: root = [3,9,20,null,null,15,7]
+Output: [[3],[20,9],[15,7]]
+
+
+Example 2:
+
+Input: root = [1]
+Output: [[1]]
+
+
+Example 3:
+
+Input: root = []
+Output: []
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 2000].
+-100 <= Node.val <= 100
+"""
+
+
+from typing import Self
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None, next: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+    @staticmethod
+    def to_list(root: Self | None) -> list[int]:
+        if not root:
+            return []
+
+        l = []
+        q = deque()
+        q.append(root)
+
+        while q:
+            n = q.popleft()
+            if n:
+                l.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+            else:
+                l.append(None)
+
+        # clean up the empty (None) nodes at the tail of last level
+        i = len(l)-1
+        while i >= 0 and l[i] is None:
+            i -= 1
+
+        return l[:i+1] if i >= 0 else []
+
+
+class Solution:
+    def zigzagLevelOrder(self, root: TreeNode | None) -> list[list[int]]:
+        if not root:
+            return []
+
+        result = []
+        level_nodes = [root]
+        reverse = False
+        while level_nodes:
+            iterator = reversed(level_nodes) if reverse else iter(level_nodes)
+            reverse = not reverse
+            result.append([n.val for n in iterator])
+            level_nodes = [x for n in level_nodes for x in (
+                n.left, n.right) if x]
+
+        return result
+
+
+def main():
+    root = TreeNode.from_list([3, 9, 20, None, None, 15, 7])
+    output = [[3], [20, 9], [15, 7]]
+    assert Solution().zigzagLevelOrder(root) == output
+
+    root = TreeNode.from_list([1])
+    output = [[1]]
+    assert Solution().zigzagLevelOrder(root) == output
+
+    root = TreeNode.from_list([])
+    output = []
+    assert Solution().zigzagLevelOrder(root) == output
+
+
+main()
