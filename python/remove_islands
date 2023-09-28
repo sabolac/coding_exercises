@@ -38,7 +38,7 @@ def is_rectangular(m):
 
 
 def remove_islands(m):
-    # make sure m is rectanguler
+    # make sure m is rectangular
     if not is_rectangular:
         raise ValueError(
             "the specified parameter 'm' is invalid: expecting a rectangular array")
