@@ -1,0 +1,208 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/evaluate-division
+Evaluate Division
+
+You are given an array of variable pairs equations and an array of real numbers
+values, where equations[i] = [Ai, Bi] and values[i] represent the equation Ai /
+Bi = values[i]. Each Ai or Bi is a string that represents a single variable.
+
+You are also given some queries, where queries[j] = [Cj, Dj] represents the jth
+query where you must find the answer for Cj / Dj = ?.
+
+Return the answers to all queries. If a single answer cannot be determined,
+return -1.0.
+
+Note: The input is always valid. You may assume that evaluating the queries will
+not result in division by zero and that there is no contradiction.
+
+Note: The variables that do not occur in the list of equations are undefined, so
+the answer cannot be determined for them.
+
+
+Example 1:
+
+Input: equations = [["a","b"], ["b","c"]], values = [2.0,3.0],
+queries = [["a","c"], ["b","a"], ["a","e"], ["a","a"], ["x","x"]]
+Output: [6.00000, 0.50000, -1.00000, 1.00000, -1.00000]
+Explanation:
+Given: a / b = 2.0, b / c = 3.0
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ?
+return: [6.0, 0.5, -1.0, 1.0, -1.0 ]
+note: x is undefined => -1.0
+
+
+Example 2:
+
+Input: equations = [["a","b"], ["b","c"], ["bc","cd"]], values = [1.5, 2.5, 5.0],
+queries = [["a","c"], ["c","b"], ["bc","cd"], ["cd","bc"]]
+Output: [3.75000, 0.40000, 5.00000, 0.20000]
+
+
+Example 3:
+
+Input: equations = [["a", "b"]], values = [0.5],
+queries = [["a","b"], ["b","a"], ["a","c"], ["x","y"]]
+Output: [0.50000, 2.00000, -1.00000, -1.00000]
+
+
+Constraints:
+
+1 <= equations.length <= 20
+equations[i].length == 2
+1 <= Ai.length, Bi.length <= 5
+values.length == equations.length
+0.0 < values[i] <= 20.0
+1 <= queries.length <= 20
+queries[i].length == 2
+1 <= Cj.length, Dj.length <= 5
+Ai, Bi, Cj, Dj consist of lower case English letters and digits.
+"""
+
+
+from typing import Self, Mapping
+from collections import deque, defaultdict
+from fractions import Fraction
+
+
+class Node:
+    def __init__(self, name: str = None, val: int = 0, neighbors: list[(Self, float)] | None = None):
+        self.name = name
+        self.val = val
+        self.neighbors = neighbors if neighbors else []
+
+    @staticmethod
+    def from_list(adj_list: list[list[int]]) -> Self | None:
+        if not adj_list:
+            return None
+
+        nodes = [Node(i) for i in range(1, len(adj_list)+1)]
+        for n, neighbors in zip(nodes, adj_list):
+            n.neighbors = [nodes[i-1] for i in neighbors]
+        return nodes[0]
+
+    def to_adj_list(self) -> list[list[int]]:
+        d = {}
+        stack = [self]
+        while stack:
+            n = stack.pop()
+            neighbors = [h.val for h in n.neighbors]
+            neighbors.sort()
+            d[n.val] = neighbors
+            stack.extend([h for h in n.neighbors if h.val not in d])
+        result = []
+        for i in range(1, len(d)+1):
+            result.append(d[i])
+        return result
+
+
+class Solution:
+    def calcEquation1(self, equations: list[list[str]], values: list[float], queries: list[list[str]]) -> list[float]:
+        # node name (a, b, c, ...) to Node mapping
+        name_2_node: Mapping(str, Node) = {}
+
+        for (n1, n2), v in zip(equations, values):
+            if n1 in name_2_node:
+                node1 = name_2_node[n1]
+            else:
+                node1 = Node(n1)
+                name_2_node[n1] = node1
+
+            if n2 in name_2_node:
+                node2 = name_2_node[n2]
+            else:
+                node2 = Node(n2)
+                name_2_node[n2] = node2
+
+            node1.neighbors.append((node2, v))
+            node2.neighbors.append((node1, 1/v))
+
+        result = []
+        for (n1, n2) in queries:
+            node1 = name_2_node.get(n1)
+            node2 = name_2_node.get(n2)
+            if not node1 or not node2:
+                result.append(-1.0)
+                continue
+
+            # a/a is 1
+            if n1 == n2:
+                result.append(1.0)
+                continue
+
+            # do a BFS to reach from node1 to node2 while multiplying the
+            # edge values at each step
+            visited = {n1}
+            q = deque([(node1, 1)])
+            found = False
+            while q and not found:
+                n, r = q.popleft()
+                for (x, v) in n.neighbors:
+                    if x.name == n2:
+                        found = True
+                        result.append(r*v)
+                        break
+                    if x.name not in visited:
+                        visited.add(x.name)
+                        q.append((x, r*v))
+
+            if not found:
+                result.append(-1.0)
+
+        return result
+
+    def calcEquation(self, equations: list[list[str]], values: list[float], queries: list[list[str]]) -> list[float]:
+        relations = defaultdict(list)
+        for equation, value in zip(equations, values):
+            a, b = equation
+            relations[a] += [(b, value)]  # a/b
+            relations[b] += [(a, 1/value)]  # b/a
+
+        def bfs(a, b):
+            q = deque([(a, 1)])
+            visited = set()
+            while q:
+                dividend, quotient = q.popleft()
+                if dividend == b:
+                    return quotient
+                visited.add(dividend)
+                for divisor, value in relations[dividend]:
+                    if divisor in visited:
+                        continue
+                    q.append((divisor, quotient*value))
+
+            return -1
+
+        result = []
+        for a, b in queries:
+            if a in relations and b in relations:
+                result.append(bfs(a, b))
+            else:
+                result.append(-1)
+
+        return result
+
+
+def main():
+    equations = [["a", "b"], ["b", "c"]]
+    values = [2.0, 3.0]
+    queries = [["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"]]
+    output = [6.00000, 0.50000, -1.00000, 1.00000, -1.00000]
+    assert Solution().calcEquation(equations, values, queries) == output
+
+    equations = [["a", "b"], ["b", "c"], ["bc", "cd"]]
+    values = [1.5, 2.5, 5.0]
+    queries = [["a", "c"], ["c", "b"], ["bc", "cd"], ["cd", "bc"]]
+    output = [3.75000, 0.40000, 5.00000, 0.20000]
+    assert Solution().calcEquation(equations, values, queries) == output
+
+    equations = [["a", "b"]]
+    values = [0.5]
+    queries = [["a", "b"], ["b", "a"], ["a", "c"], ["x", "y"]]
+    output = [0.50000, 2.00000, -1.00000, -1.00000]
+    assert Solution().calcEquation(equations, values, queries) == output
+
+
+main()
