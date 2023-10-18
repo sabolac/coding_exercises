@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/search-insert-position
+
+Search Insert Position
+
+Given a sorted array of distinct integers and a target value, return the index
+if the target is found. If not, return the index where it would be if it were
+inserted in order.
+
+You must write an algorithm with O(log n) runtime complexity.
+
+
+Example 1:
+
+Input: nums = [1,3,5,6], target = 5
+Output: 2
+
+
+Example 2:
+
+Input: nums = [1,3,5,6], target = 2
+Output: 1
+
+
+Example 3:
+
+Input: nums = [1,3,5,6], target = 7
+Output: 4
+
+
+Constraints:
+
+1 <= nums.length <= 10^4
+-10^4 <= nums[i] <= 10^4
+nums contains distinct values sorted in ascending order.
+-10^4 <= target <= 10^4
+"""
+
+
+class Solution:
+    def searchInsert(self, nums: list[int], target: int) -> int:
+        l = 0
+        r = len(nums)-1
+        while l <= r:
+            mid = l + (r-l)//2
+            if target > nums[mid]:
+                l = mid+1
+            elif target < nums[mid]:
+                r = mid-1
+            else:
+                return mid
+
+        return l
+
+
+def main():
+    nums = [1, 3, 5, 6]
+    target = 0
+    assert Solution().searchInsert(nums, target) == 0
+
+    nums = [1, 3, 5, 6]
+    target = 1
+    assert Solution().searchInsert(nums, target) == 0
+
+    nums = [1, 3, 5, 6]
+    target = 2
+    assert Solution().searchInsert(nums, target) == 1
+
+    nums = [1, 3, 5, 6]
+    target = 3
+    assert Solution().searchInsert(nums, target) == 1
+
+    nums = [1, 3, 5, 6]
+    target = 4
+    assert Solution().searchInsert(nums, target) == 2
+
+    nums = [1, 3, 5, 6]
+    target = 5
+    assert Solution().searchInsert(nums, target) == 2
+
+    nums = [1, 3, 5, 6]
+    target = 6
+    assert Solution().searchInsert(nums, target) == 3
+
+    nums = [1, 3, 5, 6]
+    target = 7
+    assert Solution().searchInsert(nums, target) == 4
+
+    nums = [1, 3, 5, 6, 10]
+    target = 0
+    assert Solution().searchInsert(nums, target) == 0
+
+    nums = [1, 3, 5, 6, 10]
+    target = 1
+    assert Solution().searchInsert(nums, target) == 0
+
+    nums = [1, 3, 5, 6, 10]
+    target = 2
+    assert Solution().searchInsert(nums, target) == 1
+
+    nums = [1, 3, 5, 6, 10]
+    target = 3
+    assert Solution().searchInsert(nums, target) == 1
+
+    nums = [1, 3, 5, 6, 10]
+    target = 4
+    assert Solution().searchInsert(nums, target) == 2
+
+    nums = [1, 3, 5, 6, 10]
+    target = 5
+    assert Solution().searchInsert(nums, target) == 2
+
+    nums = [1, 3, 5, 6, 10]
+    target = 6
+    assert Solution().searchInsert(nums, target) == 3
+
+    nums = [1, 3, 5, 6, 10]
+    target = 7
+    assert Solution().searchInsert(nums, target) == 4
+
+    nums = [1, 3, 5, 6, 10]
+    target = 10
+    assert Solution().searchInsert(nums, target) == 4
+
+    nums = [1, 3, 5, 6, 10]
+    target = 11
+    assert Solution().searchInsert(nums, target) == 5
+
+
+main()
