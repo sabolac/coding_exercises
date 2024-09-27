@@ -91,9 +91,9 @@ def builtin_functions():
 
     # any()
     assert any([1, 2, 3, 0])  # all numbers evaluates to True except 0
-    assert not all([0, 0, 0])
+    assert not any([0, 0, 0])
     assert any(["ab", "cde"])
-    assert not all(["", None, ""])
+    assert not any(["", None, ""])
 
     # ascii()
     s = "√ represents square root"
