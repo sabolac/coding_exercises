@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+# pylint: disable=invalid-name
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-module-docstring
+from pprint import pp
+
+
+def main():
+    data = []
+    process(data)
+
+
+def process(data):
+    pp(">>> START")
+    pp(data)
+    pp(">>> END")
+
+
+main()

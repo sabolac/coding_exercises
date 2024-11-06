@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import asyncio
+
+
+counter = 0
+
+
+async def worker1():
+    global counter
+    while True:
+        counter += 1
+        counter -= 1
+        # async methods won't yield execution to another one until a call to
+        # await. Thus the lines prior to the following will not be interleaved
+        # with the execution of other coroutines worker2 and printer
+        await asyncio.sleep(0)
+
+
+async def worker2():
+    global counter
+    while True:
+        counter += 1
+        counter -= 1
+        await asyncio.sleep(0)
+
+
+async def printer():
+    global counter
+    while True:
+        print(f"{counter=}")
+        await asyncio.sleep(1)
+
+asyncio.gather(worker1(), worker2(), printer())
+asyncio.get_event_loop().run_forever()

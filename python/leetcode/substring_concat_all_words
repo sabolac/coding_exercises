@@ -1,0 +1,190 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/substring-with-concatenation-of-all-words
+
+Substring with Concatenation of All Words
+
+You are given a string s and an array of strings words. All the strings of words
+are of the same length.
+
+A concatenated substring in s is a substring that contains all the strings of
+any permutation of words concatenated.
+
+For example, if words = ["ab","cd","ef"], then "abcdef", "abefcd", "cdabef",
+"cdefab", "efabcd", and "efcdab" are all concatenated strings. "acdbef" is not a
+concatenated substring because it is not the concatenation of any permutation of
+words.
+
+Return the starting indices of all the concatenated substrings in s. You can
+return the answer in any order.
+
+
+
+Example 1:
+
+Input: s = "barfoothefoobarman", words = ["foo","bar"]
+Output: [0,9]
+Explanation: Since words.length == 2 and words[i].length == 3, the concatenated
+substring has to be of length 6.
+The substring starting at 0 is "barfoo". It is the concatenation of
+["bar","foo"] which is a permutation of words.
+The substring starting at 9 is "foobar". It is the concatenation of
+["foo","bar"] which is a permutation of words.
+The output order does not matter. Returning [9,0] is fine too.
+
+
+Example 2:
+
+Input: s = "wordgoodgoodgoodbestword", words = ["word","good","best","word"]
+Output: []
+Explanation: Since words.length == 4 and words[i].length == 4, the concatenated
+substring has to be of length 16.
+There is no substring of length 16 in s that is equal to the concatenation of
+any permutation of words.
+We return an empty array.
+
+
+Example 3:
+
+Input: s = "barfoofoobarthefoobarman", words = ["bar","foo","the"]
+Output: [6,9,12]
+Explanation: Since words.length == 3 and words[i].length == 3, the concatenated
+substring has to be of length 9.
+The substring starting at 6 is "foobarthe". It is the concatenation of
+["foo","bar","the"] which is a permutation of words.
+The substring starting at 9 is "barthefoo". It is the concatenation of
+["bar","the","foo"] which is a permutation of words.
+The substring starting at 12 is "thefoobar". It is the concatenation of
+["the","foo","bar"] which is a permutation of words.
+
+
+Constraints:
+
+1 <= s.length <= 10^4
+1 <= words.length <= 5000
+1 <= words[i].length <= 30
+s and words[i] consist of lowercase English letters.
+"""
+
+
+from collections import Counter, defaultdict, deque
+from typing import List
+
+
+class Solution:
+    def findSubstring_slow(self, s: str, words: List[str]) -> List[int]:
+        if not s or not words:
+            return []
+
+        result = []
+        word_2_count = Counter(words)
+
+        # assuming all words are length n by problem definition
+        n = len(words[0])
+        max_index = len(s) - n*len(words)
+        for i in range(max_index + 1):
+            j = i
+            w_2_c = word_2_count.copy()
+            while True:
+                w = s[j:j+n]
+                j += n
+                if w not in w_2_c:
+                    break
+
+                w_2_c[w] -= 1
+                if w_2_c[w] == 0:
+                    del w_2_c[w]
+
+            # if we matched all words, then the dict will be empty
+            if len(w_2_c) == 0:
+                result.append(i)
+
+        return result
+
+    def findSubstring_queue(self, s: str, words: List[str]) -> List[int]:
+        if not s or not words:
+            return []
+
+        result = []
+        word_len = len(words[0])
+        word_count = len(words)
+        all_word_len = word_count * word_len
+        max_word_index = len(s) - word_len
+        word_2_count = Counter(words)
+
+        def found_word():
+            not_found.pop()  # this sets not_found to evaluate to False in an if
+            queue.append(word)
+            w_2_c[word] -= 1
+            # we have a permutation of all words if we consumed all
+            if len(queue) == word_count:
+                result.append(j + word_len - all_word_len)
+
+        for i in range(word_len):
+            queue = deque()
+            w_2_c = word_2_count.copy()
+
+            for j in range(i, max_word_index + 1, word_len):
+                word = s[j:j + word_len]
+                not_found = [True]  # using list so that found_word can capture
+
+                if w_2_c.get(word, 0) > 0:
+                    found_word()
+
+                while len(queue) and not_found:
+                    qw = queue.popleft()
+                    w_2_c[qw] += 1
+                    if qw == word:
+                        found_word()
+
+        return result
+
+    # this is the same logic as findSubstring_queue but without using an
+    # explicit queue. Since queue is the same as the current run of the
+    # substring, there is no need for a separate queue. The queue is simulated
+    # by the index i, poping from left happens in the while loop
+    def findSubstring(self, s: str, words: List[str]) -> List[int]:
+        if not s or not words:
+            return []
+
+        result = []
+        word_len = len(words[0])
+        all_word_len = len(words) * word_len
+        word_2_count = Counter(words)
+
+        for i in range(word_len):
+            w_2_c = word_2_count.copy()
+
+            for j in range(i, len(s) + 1 - word_len, word_len):
+                word = s[j: j + word_len]
+                w_2_c[word] -= 1
+
+                while w_2_c[word] < 0:
+                    w = s[i: i + word_len]
+                    w_2_c[w] += 1
+                    i += word_len
+
+                if i + all_word_len == j + word_len:
+                    result.append(i)
+
+        return result
+
+
+def main():
+    assert Solution().findSubstring("", []) == []
+    s = "barfoothefoobarman"
+    words = ["foo", "bar"]
+    assert Solution().findSubstring(s, words) == [0, 9]
+
+    s = "wordgoodgoodgoodbestword"
+    words = ["word", "good", "best", "word"]
+    assert Solution().findSubstring(s, words) == []
+
+    s = "barfoofoobarthefoobarman"
+    words = ["bar", "foo", "the"]
+    assert Solution().findSubstring(s, words) == [6, 9, 12]
+
+
+main()

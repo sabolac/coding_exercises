@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+
+"""
+Ref: https://leetcode.com/problems/candy
+
+There are n children standing in a line. Each child is assigned a rating value
+given in the integer array ratings.
+
+You are giving candies to these children subjected to the following
+requirements:
+
+Each child must have at least one candy.
+Children with a higher rating get more candies than their neighbors.
+
+Return the minimum number of candies you need to have to distribute the candies
+to the children.
+
+
+
+Example 1:
+
+Input: ratings = [1,0,2]
+Output: 5
+Explanation: You can allocate to the first, second and third child with 2, 1, 2
+candies respectively.
+
+
+Example 2:
+
+Input: ratings = [1,2,2]
+Output: 4
+Explanation: You can allocate to the first, second and third child with 1, 2, 1
+candies respectively.
+The third child gets 1 candy because it satisfies the above two conditions.
+
+
+Constraints:
+
+n == ratings.length
+1 <= n <= 2 * 10^4
+0 <= ratings[i] <= 2 * 10^4
+"""
+
+
+from typing import List
+import random
+
+
+class Solution:
+    def candy(self, ratings: List[int]) -> int:
+        n = len(ratings)
+        candies = [1]*n
+        # move forward, check right neighbor
+        for i in range(n-1):
+            if ratings[i+1] > ratings[i] and candies[i+1] <= candies[i]:
+                candies[i+1] = candies[i] + 1
+
+        # move backward, check left neighbor
+        for i in range(n-1, 0, -1):
+            if ratings[i-1] > ratings[i] and candies[i-1] <= candies[i]:
+                candies[i-1] = candies[i] + 1
+
+        return sum(candies)
+
+
+def main():
+    assert Solution().candy([1, 0, 2]) == 5
+    assert Solution().candy([1, 2, 2]) == 4
+    r = [4, 3, 9, 3, 2, 9, 8, 0, 1, 8, 4, 8, 3, 7, 6, 3, 7, 3, 0, 1]
+    #c= [2, 1, 3, 2, 1, 3, 2, 1, 2, 3, 1, 2, 1, 3, 2, 1, 3, 2, 1, 2]
+    assert Solution().candy(r) == 38
+
+    r = list(range(10_000))
+    assert Solution().candy(r) == 50_005_000
+    r.reverse()
+    assert Solution().candy(r) == 50_005_000
+
+    r = random.choices(range(10), k=2_000_000)
+    assert Solution().candy(r) > 3_000_000
+
+
+main()

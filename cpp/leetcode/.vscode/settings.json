@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "*.tac": "python",
+        "README*": "log",
+        "scratch*": "log",
+        "stdio*": "log",
+        "vector": "cpp",
+        "iostream": "cpp"
+    }
+}

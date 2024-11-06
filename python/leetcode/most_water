@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/container-with-most-water
+
+Container With Most Water
+You are given an integer array height of length n. There are n vertical lines
+drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]).
+
+Find two lines that together with the x-axis form a container, such that the
+container contains the most water.
+
+Return the maximum amount of water a container can store.
+
+Notice that you may not slant the container.
+
+
+Example 1:
+
+Input: height = [1,8,6,2,5,4,8,3,7]
+Output: 49
+
+Explanation:  In this case, the max area of water the container can contain is
+49 between second line (8) and the last (7), min(height[8],height[1])*(8-1)= 49.
+
+
+Example 2:
+
+Input: height = [1,1]
+Output: 1
+
+
+Constraints:
+
+n == height.length
+2 <= n <= 10^5
+0 <= height[i] <= 10^4
+"""
+
+
+from typing import List
+
+
+class Solution:
+    """
+    The intuition is as follows:
+    The amount of water between h[l] and h[r] (r>l) is equal to height*base,
+    where height is the minimum of h[l] and h[r]:
+        water = min(h[l], h[r]) * (r-l)
+
+    The base is maximum when l = 0 (left side of h) and r = len(h)-1 (right side
+    of h).
+
+    Each time we change one of the sides (l or r), we want to make the product
+    in the equation possibly larger, which can only happen if we move the
+    smaller one to the next, hoping to move to a larger value for min(h[l],
+    h[r]). The base (r-l) will always be 1 less as we move one of the sides. So
+    at each step, we move the smaller side to the next one moving either left or
+    right updating the max_water at each step when the product gets larger than
+    the previous value.
+    """
+
+    def find_max_water(self, h: List[int]) -> int:
+        max_water = 0
+
+        l = 0
+        r = len(h) - 1
+
+        while l < r:
+            current = min(h[r], h[l])*(r-l)
+            if current > max_water:
+                max_water = current
+
+            if h[l] < h[r]:
+                l += 1
+            else:
+                r -= 1
+
+        return max_water
+
+
+def main():
+    assert Solution().find_max_water([1, 8, 6, 2, 5, 4, 8, 3, 7]) == 49
+    assert Solution().find_max_water([1, 1]) == 1
+
+
+main()

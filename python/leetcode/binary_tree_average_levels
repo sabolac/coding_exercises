@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/average-of-levels-in-binary-tree
+
+Average of Levels in Binary Tree
+
+Given the root of a binary tree, return the average value of the nodes on each
+level in the form of an array. Answers within 10-5 of the actual answer will be
+accepted.
+
+
+Example 1:
+
+Input: root = [3,9,20,null,null,15,7]
+Output: [3.00000,14.50000,11.00000]
+Explanation: The average value of nodes on level 0 is 3, on level 1 is 14.5, and
+on level 2 is 11.
+Hence return [3, 14.5, 11].
+
+
+Example 2:
+
+Input: root = [3,9,20,15,7]
+Output: [3.00000,14.50000,11.00000]
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [1, 10^4].
+-2^31 <= Node.val <= 2^31 - 1
+"""
+
+
+from typing import Self
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None, next: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+    @staticmethod
+    def to_list(root: Self | None) -> list[int]:
+        if not root:
+            return []
+
+        l = []
+        q = deque()
+        q.append(root)
+
+        while q:
+            n = q.popleft()
+            if n:
+                l.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+            else:
+                l.append(None)
+
+        # clean up the empty (None) nodes at the tail of last level
+        i = len(l)-1
+        while i >= 0 and l[i] is None:
+            i -= 1
+
+        return l[:i+1] if i >= 0 else []
+
+
+class Solution:
+    def averageOfLevels(self, root: TreeNode | None) -> list[float]:
+        result = []
+        level_nodes = [root]
+
+        while level_nodes:
+            level_total = 0
+            for n in level_nodes:
+                level_total += n.val
+            result.append(level_total/len(level_nodes))
+            # populate the next level of nodes (if any)
+            level_nodes = [x for n in level_nodes for x in (
+                n.left, n.right) if x]
+
+        return result
+
+
+def main():
+    root = TreeNode.from_list([3, 9, 20, None, None, 15, 7])
+    output = [3, 14.5, 11]
+    assert Solution().averageOfLevels(root) == output
+
+    root = TreeNode.from_list([3, 9, 20, 15, 7])
+    output = [3, 14.5, 11]
+    assert Solution().averageOfLevels(root) == output
+
+    root = TreeNode.from_list([1, 2, 4])
+    output = [1, 3]
+    assert Solution().averageOfLevels(root) == output
+
+
+main()

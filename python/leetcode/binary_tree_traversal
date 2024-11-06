@@ -1,0 +1,206 @@
+#!/usr/bin/env python3
+
+
+"""
+Traversal types both recursive and iterative
+"""
+
+
+from typing import Self
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+    @staticmethod
+    def to_list(root: Self | None) -> list[int]:
+        if not root:
+            return []
+
+        l = []
+        q = deque()
+        q.append(root)
+
+        while q:
+            n = q.popleft()
+            if n:
+                l.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+            else:
+                l.append(None)
+
+        # clean up the empty (None) nodes at the tail of last level
+        i = len(l)-1
+        while i >= 0 and l[i] is None:
+            i -= 1
+
+        return l[:i+1] if i >= 0 else []
+
+
+class Solution:
+    def inorder_recursive(self, root: TreeNode | None) -> list[int]:
+        if not root:
+            return []
+        result = []
+
+        def dfs(n: TreeNode | None) -> None:
+            nonlocal result
+            if not n:
+                return
+            dfs(n.left)
+            result.append(n.val)
+            dfs(n.right)
+
+        dfs(root)
+        return result
+
+    def preorder_recursive(self, root: TreeNode | None) -> list[int]:
+        if not root:
+            return []
+        result = []
+
+        def dfs(n: TreeNode | None) -> None:
+            nonlocal result
+            if not n:
+                return
+            result.append(n.val)
+            dfs(n.left)
+            dfs(n.right)
+
+        dfs(root)
+        return result
+
+    def postorder_recursive(self, root: TreeNode | None) -> list[int]:
+        if not root:
+            return []
+        result = []
+
+        def dfs(n: TreeNode | None) -> None:
+            nonlocal result
+            if not n:
+                return
+            dfs(n.left)
+            dfs(n.right)
+            result.append(n.val)
+
+        dfs(root)
+        return result
+
+    def inorder(self, root: TreeNode | None) -> list[int]:
+        if not root:
+            return []
+
+        result = []
+        stack = []
+        n = root
+        while True:
+            while n:
+                stack.append(n)
+                n = n.left
+            # done traversing all nodes in the tree
+            if not stack:
+                return result
+            n = stack.pop()
+            result.append(n.val)
+            n = n.right
+
+    def preorder(self, root: TreeNode | None) -> list[int]:
+        if not root:
+            return []
+
+        result = []
+        stack = [root]
+        while stack:
+            n = stack.pop()
+            result.append(n.val)
+            if n.right:
+                stack.append(n.right)
+            if n.left:
+                stack.append(n.left)
+
+        return result
+
+    def postorder(self, root: TreeNode | None) -> list[int]:
+        """
+        Push the node two times while traversing to the left. While popping if
+        stack top is the same as current node then go for right else visit the
+        node
+        """
+        if not root:
+            return []
+
+        result = []
+        stack = []
+        n = root
+        while True:
+            while n:
+                stack.append(n)
+                stack.append(n)
+                n = n.left
+
+            if not stack:
+                return result
+
+            n = stack.pop()
+            if stack and stack[-1] == n:
+                n = n.right
+            else:
+                result.append(n.val)
+                n = None
+
+    def level_order(self, root: TreeNode | None) -> list[int]:
+        result = []
+        q = deque([root])
+        while q:
+            n = q.popleft()
+            if n:
+                result.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+
+        return result
+
+
+def main():
+    r = TreeNode.from_list([i for i in range(1, 2**3)])
+    assert Solution().level_order(r) == [1, 2, 3, 4, 5, 6, 7]
+    assert Solution().inorder(r) == [4, 2, 5, 1, 6, 3, 7]
+    assert Solution().inorder_recursive(r) == [4, 2, 5, 1, 6, 3, 7]
+    assert Solution().preorder(r) == [1, 2, 4, 5, 3, 6, 7]
+    assert Solution().preorder_recursive(r) == [1, 2, 4, 5, 3, 6, 7]
+    assert Solution().postorder(r) == [4, 5, 2, 6, 7, 3, 1]
+    assert Solution().postorder_recursive(r) == [4, 5, 2, 6, 7, 3, 1]
+
+
+main()

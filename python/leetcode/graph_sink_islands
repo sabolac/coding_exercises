@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+
+"""
+Ref: https://leetcode.com/problems/surrounded-regions
+
+Surrounded Regions
+
+Given an m x n matrix board containing 'X' and 'O', capture all regions that are
+4-directionally surrounded by 'X'.
+
+A region is captured by flipping all 'O's into 'X's in that surrounded region.
+
+
+
+Example 1:
+
+
+Input: board = [
+    ['X','X','X','X'],
+    ['X','O','O','X'],
+    ['X','X','O','X'],
+    ['X','O','X','X']]
+Output:[
+    ['X','X','X','X'],
+    ['X','X','X','X'],
+    ['X','X','X','X'],
+    ['X','O','X','X']]
+
+Explanation: Notice that an 'O' should not be flipped if:
+    - It is on the border, or
+    - It is adjacent to an 'O' that should not be flipped.
+The bottom 'O' is on the border, so it is not flipped.
+The other three 'O' form a surrounded region, so they are flipped.
+
+Example 2:
+
+Input: board = [['X']]
+Output: [['X']]
+
+
+Constraints:
+
+m == board.length
+n == board[i].length
+1 <= m, n <= 200
+board[i][j] is 'X' or 'O'.
+"""
+
+
+class Solution:
+    def sink_islands(self, board: list[list[str]]) -> None:
+        def mark_connected():
+            if board[i][j] == 'O':
+                stack = [(i, j)]
+                while stack:
+                    p, q = stack.pop()
+                    if board[p][q] == 'O':
+                        board[p][q] = 'C'
+                        if p > 0:
+                            stack.append((p-1, q))
+                        if p < row_count-1:
+                            stack.append((p+1, q))
+                        if q > 0:
+                            stack.append((p, q-1))
+                        if q < column_count-1:
+                            stack.append((p, q+1))
+
+        row_count = len(board)
+        column_count = len(board[0])
+
+        for j in [0, column_count-1]:
+            for i in range(row_count):
+                mark_connected()
+
+        for i in [0, row_count-1]:
+            for j in range(column_count):
+                mark_connected()
+
+        for i in range(row_count):
+            for j in range(column_count):
+                if board[i][j] == 'C':
+                    board[i][j] = 'O'
+                elif board[i][j] == 'O':
+                    board[i][j] = 'X'
+
+
+def main():
+    board = [
+        ['X', 'X', 'X', 'X'],
+        ['X', 'O', 'O', 'X'],
+        ['X', 'X', 'O', 'X'],
+        ['X', 'O', 'X', 'X']
+    ]
+
+    output = [
+        ['X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X'],
+        ['X', 'O', 'X', 'X']
+    ]
+    Solution().sink_islands(board)
+    assert board == output
+
+
+main()

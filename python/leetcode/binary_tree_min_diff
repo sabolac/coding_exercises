@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/minimum-absolute-difference-in-bst
+
+Minimum Distance Between BST Nodes
+
+Given the root of a Binary Search Tree (BST), return the minimum difference
+between the values of any two different nodes in the tree.
+
+
+Example 1:
+
+Input: root = [4,2,6,1,3]
+Output: 1
+
+
+Example 2:
+
+Input: root = [1,0,48,null,null,12,49]
+Output: 1
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [2, 100].
+0 <= Node.val <= 10^5
+"""
+
+
+from typing import Self
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+
+class Solution:
+    """
+    For each node in the BST, nodes closest in value to it is the right most
+    node in the left subtree and left most node in the right subtree
+    """
+
+    def minDiffInBST(self, root: TreeNode | None) -> int:
+        def dfs(n):
+            if n.left:
+                l_max = n.left
+                while l_max.right:
+                    l_max = l_max.right
+                self.min_diff = min(self.min_diff, n.val - l_max.val)
+                dfs(n.left)
+            if n.right:
+                r_min = n.right
+                while r_min.left:
+                    r_min = r_min.left
+                self.min_diff = min(self.min_diff, r_min.val - n.val)
+                dfs(n.right)
+
+        self.min_diff = float('inf')
+        dfs(root)
+        return self.min_diff
+
+
+def main():
+    r = TreeNode.from_list([4, 2, 6, 1, 3])
+    assert Solution().minDiffInBST(r) == 1
+
+    r = TreeNode.from_list([1, 0, 48, None, None, 12, 49])
+    assert Solution().minDiffInBST(r) == 1
+
+
+main()

@@ -1,0 +1,156 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/game-of-life
+
+Game of Life
+
+According to Wikipedia's article: "The Game of Life, also known simply as Life,
+is a cellular automaton devised by the British mathematician John Horton Conway
+in 1970."
+
+The board is made up of an m x n grid of cells, where each cell has an initial
+state: live (represented by a 1) or dead (represented by a 0). Each cell
+interacts with its eight neighbors (horizontal, vertical, diagonal) using the
+following four rules (taken from the above Wikipedia article):
+
+1- Any live cell with fewer than two live neighbors dies as if caused by
+under-population.
+2- Any live cell with two or three live neighbors lives on to the next
+generation.
+3- Any live cell with more than three live neighbors dies, as if by
+over-population.
+4- Any dead cell with exactly three live neighbors becomes a live cell, as if by
+reproduction.
+
+The next state is created by applying the above rules simultaneously to every
+cell in the current state, where births and deaths occur simultaneously. Given
+the current state of the m x n grid board, return the next state.
+
+
+
+Example 1:
+
+Input: board = [[0,1,0],[0,0,1],[1,1,1],[0,0,0]]
+Output: [[0,0,0],[1,0,1],[0,1,1],[0,1,0]]
+
+
+Example 2:
+
+Input: board = [[1,1],[1,0]]
+Output: [[1,1],[1,1]]
+
+
+Constraints:
+
+m == board.length
+n == board[i].length
+1 <= m, n <= 25
+board[i][j] is 0 or 1.
+
+
+Follow up:
+
+Could you solve it in-place? Remember that the board needs to be updated
+simultaneously: You cannot update some cells first and then use their updated
+values to update other cells.
+
+In this question, we represent the board using a 2D array. In principle, the
+board is infinite, which would cause problems when the active area encroaches
+upon the border of the array (i.e., live cells reach the border). How would you
+address these problems?
+"""
+
+
+from typing import List
+
+
+class Solution:
+
+    def neighbor_count(self, board: List[List[int]], i: int, j: int) -> int:
+        m = len(board)
+        n = len(board[0])
+        total = 0
+
+        for (r, c) in [(i-1, j-1), (i-1, j), (i-1, j+1),
+                       (i,   j-1),           (i,   j+1),
+                       (i+1, j-1), (i+1, j), (i+1, j+1)]:
+            if 0 <= r < m and 0 <= c < n:
+                # % 2 due to first pass adding 2 for transitions
+                total += board[r][c] % 2
+
+        return total
+
+    def gameOfLife(self, board: List[List[int]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+
+        According to the rules, here are the state transitions based on the
+        count c of neighbors of a cell:
+
+        c < 2 or c > 3:  1->0
+        c = 3         :  0->1
+
+        Approach:
+        First pass: Scan all the elements and compute c for each cell and if
+        there is state change required add 2 to the value. Thus 0 becomes 2 and
+        1 becomes 3. when computing c (neighbor count), add the modulus 2 of the
+        neighboring cells to the total
+
+        Second pass: Scan all the elements and update 2 -> 1 and 3 -> 0
+        """
+        # first pass
+        for i, row in enumerate(board):
+            for j, v in enumerate(row):
+                c = self.neighbor_count(board, i, j)
+                if (v == 0 and c == 3) or (v == 1 and (c < 2 or c > 3)):
+                    row[j] += 2
+
+        # second pass
+        for i, row in enumerate(board):
+            for j, v in enumerate(row):
+                if v == 2 or v == 3:
+                    row[j] = (v-1) % 2  # 2->1  3->0
+
+
+def compare_matrix(m1: List[List[int]], m2: List[List[int]]) -> bool:
+    if len(m1) != len(m2):
+        return False
+
+    for r1, r2 in zip(m1, m2):
+        if r1 != r2:
+            return False
+
+    return True
+
+
+def main():
+    board = [
+        [1, 1],
+        [1, 0]
+    ]
+    output = [
+        [1, 1],
+        [1, 1]
+    ]
+    Solution().gameOfLife(board)
+    assert compare_matrix(board, output)
+
+    board = [
+        [0, 1, 0],
+        [0, 0, 1],
+        [1, 1, 1],
+        [0, 0, 0]
+    ]
+    output = [
+        [0, 0, 0],
+        [1, 0, 1],
+        [0, 1, 1],
+        [0, 1, 0]
+    ]
+    Solution().gameOfLife(board)
+    assert compare_matrix(board, output)
+
+
+main()

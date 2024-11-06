@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/minimum-window-substring
+
+Minimum Window Substring
+Given two strings s and t of lengths m and n respectively, return the minimum
+window substring of s such that every character in t (including duplicates) is
+included in the window. If there is no such substring, return the empty string
+"".
+
+The testcases will be generated such that the answer is unique.
+
+
+
+Example 1:
+
+Input: s = "adobecodebanc", t = "abc"
+Output: "banc"
+Explanation: The minimum window substring "banc" includes 'a', 'b', and 'c' from
+string t.
+
+
+Example 2:
+
+Input: s = "a", t = "a"
+Output: "a"
+Explanation: The entire string s is the minimum window.
+
+
+Example 3:
+
+Input: s = "a", t = "aa"
+Output: ""
+Explanation: Both 'a's from t must be included in the window.
+Since the largest window of s only has one 'a', return empty string.
+
+
+Constraints:
+
+m == s.length
+n == t.length
+1 <= m, n <= 10^5
+s and t consist of uppercase and lowercase English letters.
+
+
+Follow up: Could you find an algorithm that runs in O(m + n) time?
+"""
+
+
+from collections import Counter, deque
+
+
+class Solution:
+    def minWindow_queue(self, s: str, t: str) -> str:
+        window = ""
+        c_2_count = Counter(t)
+        queue = deque()
+
+        for i in range(len(s)):
+            c = s[i]
+            if c in c_2_count:
+                queue.append((c, i))
+                c_2_count[c] -= 1
+                # found all characters of t if all counts dropped to 0 or less,
+                # check to see if the window is smaller than before after
+                # removing excessive characters from the left side of the window
+                # if any
+                if all(x <= 0 for x in c_2_count.values()):
+                    while c_2_count[queue[0][0]] < 0:
+                        c_2_count[queue.popleft()[0]] += 1
+
+                    _, start = queue[0]
+                    _, end = queue[-1]
+                    if not window or end-start+1 < len(window):
+                        window = s[start:end+1]
+                    # drop the left most to invalidate the window
+                    c_2_count[queue.popleft()[0]] += 1
+
+        return window
+
+    def minWindow(self, s: str, t: str) -> str:
+        c_2_count = Counter(t)
+        begin = end = head = 0
+        counter = len(t)
+        d = float('inf')
+
+        while end < len(s):
+            c = s[end]
+            end += 1
+            if c_2_count[c] > 0:  # c in t
+                counter -= 1
+            # if c not in t, the count will be negative
+            c_2_count[c] -= 1
+            while counter == 0:
+                if end - begin < d:
+                    d = end - begin
+                    head = begin
+                c = s[begin]
+                begin += 1
+                if c_2_count[c] == 0:  # c in t
+                    counter += 1  # invalidate the window
+                # if c not in t, the count will be at most 0 when the last
+                # instance is encountered
+                c_2_count[c] += 1
+
+        return s[head:head + d] if d < float('inf') else ""
+
+
+def main():
+    assert Solution().minWindow("adobecodebanc", "abc") == "banc"
+    assert Solution().minWindow("a", "a") == "a"
+    assert Solution().minWindow("a", "aa") == ""
+    assert Solution().minWindow("aaaa", "aa") == "aa"
+    assert Solution().minWindow("aaa", "aaaaa") == ""
+    assert Solution().minWindow("baaabb", "aab") == "baa"
+
+
+main()

@@ -1,0 +1,75 @@
+1- LeetCode
+
+2- System Design
+
+3- Java/JavaScript/TypeScript/Python/C++/C#/Go/
+    - Common tasks
+        - string operations
+        - types: double float etc
+        - basic libs/collections
+    - Multithreading, synchronization primitives locks semaphore etc
+    - Async/Await
+        unsync Python api
+    - JavaScript: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+    - Html/CSS/Web: https://developer.mozilla.org/en-US/docs/Learn
+    - https://developer.mozilla.org/en-US/play
+
+3- Technologies:
+    - REST Api development
+    - Redis
+    - Nginx
+    - React/Flask/Express (JS frameworks)
+    - SQL
+        - Postgres
+        - MySQL
+        - MongoDB
+
+4- Computer Science
+    - Number representation:
+        - 2's complement
+    - Regular expressions
+
+5- DevOps
+    - Docker
+    - Kubernetes
+    - Ansible
+
+6- Microservices
+
+7- OS/Linux
+
+8- Scripting/Bash
+
+9- Networking
+    - configuration
+    - troubleshooting
+    - TCP/IP fundamentals
+        - routing arp switch brigde etc
+
+10- Projects (youtube examples)
+    - Develop projects in multiple languages
+    - deploy in K8 minikube
+
+
+Interview study resources:
+
+https://orrsella.gitbooks.io/soft-eng-interview-prep/content/
+
+Source 1) LeetCode:
+    https://leetcode.com/
+
+    I solved some Medium and Hard questions here (I may have solved around 25 questions).
+    I've found some of the Hard questions too extreme.
+    Even though I could solve most of them, I don't think they make good interview questions.
+
+Source 2) Elements of Programming Interviews:
+    https://www.amazon.com/Elements-Programming-Interviews-Insiders-Guide/dp/1479274836
+    This book mostly has programming questions, but it also have design questions (15 of them).
+
+Source 3) System Design Interview - Volume 1 and Volume 2:
+    https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF
+    https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119
+
+Source 4) Grokking the System Design Interview:
+    This is paid material, but it is worth it.
+    https://www.educative.io/courses/grokking-the-system-design-interview

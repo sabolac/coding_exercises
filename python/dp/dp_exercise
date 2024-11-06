@@ -1,0 +1,730 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://youtu.be/oBt53YbR9Kk
+
+Dynamic Programming - Learn to Solve Algorithmic Problems & Coding Challenges
+
+
+Memoization recipe
+
+    1- Make it work: correctness
+        - Visualize the problem as tree
+        - Implement the tree as recursion
+        - Test it
+    2- Make it efficient: performance
+        - Add memo object
+        - Add a base case to return memo values
+        - Store return values into the memo
+
+    fib memoization
+    gridTraveler memoization
+    canSum memoization
+    howSum memoization
+    bestSum memoization
+    canConstruct memoization
+    countConstruct memoization
+    allConstruct memoization
+
+
+Tabulation recipe
+    1- Visualize the problem as a table
+    2- Size the table based on the input
+    3- Initialize the table with default values
+    4- Seed the trivial answer into the table
+    5- Iterate through the table
+    6- Fill further positions based on the current position
+
+
+    fib tabulation
+    gridTraveler tabulation
+    canSum tabulation
+    howSum tabulation
+    bestSum tabulation
+    canConstruct tabulation
+    countConstruct tabulation
+    allConstruct tabulation
+
+"""
+
+
+from functools import cache
+
+
+def fib_recursive(n: int = 0) -> int:
+    """plain recursive without memoization"""
+    # base case: fib(0) = 0 and fib(1) = 1
+    if n <= 1:
+        return n
+    return fib_recursive(n-1) + fib_recursive(n-2)
+
+
+def fib_memo(n: int = 0, memo: list[int] = []) -> int:
+    """recursive with memoization"""
+    if not memo:
+        memo = [0, 1]
+    if n < len(memo):
+        return memo[n]
+    result = fib_memo(n-1, memo) + fib_memo(n-2, memo)
+    memo.append(result)
+    return result
+
+
+def fib_iterative(n: int) -> int:
+    # base case: fib(0) = 0 and fib(1) = 1
+    if n <= 1:
+        return n
+    fib = 1
+    prev = 0
+    for _ in range(2, n+1):
+        prev += fib
+        fib, prev = prev, fib
+
+    return fib
+
+
+def fib_tabulation(n: int) -> int:
+    fib = [0]*(n+1)
+    if n > 0:
+        fib[1] = 1
+    for i in range(2, n+1):
+        fib[i] = fib[i-1] + fib[i-2]
+    return fib[n]
+
+
+def test_fib():
+    assert fib_recursive(0) == 0
+    assert fib_recursive(1) == 1
+    assert fib_recursive(2) == 1
+    assert fib_recursive(3) == 2
+    assert fib_recursive(4) == 3
+    assert fib_recursive(5) == 5
+    assert fib_recursive(6) == 8
+
+    assert fib_memo(0) == 0
+    assert fib_memo(1) == 1
+    assert fib_memo(2) == 1
+    assert fib_memo(3) == 2
+    assert fib_memo(4) == 3
+    assert fib_memo(5) == 5
+    assert fib_memo(6) == 8
+    assert fib_memo(55) == 139583862445
+    assert fib_memo(155) == 110560307156090817237632754212345
+
+    assert fib_iterative(0) == 0
+    assert fib_iterative(1) == 1
+    assert fib_iterative(2) == 1
+    assert fib_iterative(3) == 2
+    assert fib_iterative(4) == 3
+    assert fib_iterative(5) == 5
+    assert fib_iterative(6) == 8
+    assert fib_iterative(55) == 139583862445
+    assert fib_iterative(155) == 110560307156090817237632754212345
+
+    assert fib_tabulation(0) == 0
+    assert fib_tabulation(1) == 1
+    assert fib_tabulation(2) == 1
+    assert fib_tabulation(3) == 2
+    assert fib_tabulation(4) == 3
+    assert fib_tabulation(5) == 5
+    assert fib_tabulation(6) == 8
+    assert fib_tabulation(55) == 139583862445
+    assert fib_tabulation(155) == 110560307156090817237632754212345
+
+
+"""
+Grid traveller:
+Return the number of ways to move from the top left corner of a 2D grid of
+dimensions m x n to the bottom right corner. At each step you may only move down
+or right
+"""
+
+
+@cache
+def grid_traveller_recursive(m: int, n: int) -> int:
+    if m == 1 or n == 1:
+        return 1
+    if m <= 0 or n <= 0:
+        return 0
+    return grid_traveller_recursive(m-1, n) + grid_traveller_recursive(m, n-1)
+
+
+def grid_traveller_memo(m: int, n: int, memo: list[list[int]] = []) -> int:
+    if not memo:
+        memo = [[-1]*n for _ in range(m)]
+        memo[0] = [1]*n
+        for i in range(m):
+            memo[i][0] = 1
+    if m <= 0 or n <= 0:
+        return 0
+    if memo[m-1][n-1] != -1:
+        return memo[m-1][n-1]
+    result = grid_traveller_memo(m-1, n, memo) + \
+        grid_traveller_memo(m, n-1, memo)
+    memo[m-1][n-1] = result
+    return result
+
+
+def grid_traveller_tabulation(m: int, n: int) -> int:
+    gd = [[1]*n for _ in range(m)]
+
+    for i in range(1, m):
+        for j in range(1, n):
+            gd[i][j] = gd[i-1][j] + gd[i][j-1]
+
+    return gd[m-1][n-1]
+
+
+def test_grid_traveller() -> int:
+    assert grid_traveller_recursive(1, 1) == 1
+    assert grid_traveller_recursive(2, 3) == 3
+    assert grid_traveller_recursive(3, 2) == 3
+    assert grid_traveller_recursive(3, 3) == 6
+    assert grid_traveller_recursive(4, 4) == 20
+    # the followig calls will run for a long long time if @cache decorator is
+    # not used in the recursive method definition
+    assert grid_traveller_recursive(20, 20) == 35345263800
+    assert grid_traveller_recursive(50, 50) == 25477612258980856902730428600
+
+    assert grid_traveller_memo(1, 1) == 1
+    assert grid_traveller_memo(2, 3) == 3
+    assert grid_traveller_memo(3, 2) == 3
+    assert grid_traveller_memo(3, 3) == 6
+    assert grid_traveller_memo(4, 4) == 20
+    assert grid_traveller_memo(20, 20) == 35345263800
+    assert grid_traveller_memo(50, 50) == 25477612258980856902730428600
+
+    assert grid_traveller_tabulation(1, 1) == 1
+    assert grid_traveller_tabulation(2, 3) == 3
+    assert grid_traveller_tabulation(3, 2) == 3
+    assert grid_traveller_tabulation(3, 3) == 6
+    assert grid_traveller_tabulation(4, 4) == 20
+    assert grid_traveller_tabulation(20, 20) == 35345263800
+    assert grid_traveller_tabulation(50, 50) == 25477612258980856902730428600
+
+
+"""
+Can Sum:
+Return True if it is possible to generate target by adding numbers in the given
+nums array. Return False otherwise.
+The numbers are all non-negative
+Each number in the array can be used any number of times
+"""
+
+
+def can_sum_recursive(target: int, nums: list[int]) -> bool:
+    if target == 0:
+        return True
+    if target < 0:
+        return False
+
+    for n in nums:
+        if n == 0:
+            continue
+        remaining = target - n
+        if can_sum_recursive(remaining, nums):
+            return True
+
+    return False
+
+
+def can_sum_memo(target: int, nums: list[int], memo: dict[int, bool] = None) -> bool:
+    if not memo:
+        memo = {}
+        memo[0] = True
+
+    if target < 0:
+        return False
+
+    if target in memo:
+        return memo[target]
+
+    for n in nums:
+        if n == 0:
+            continue
+        remaining = target - n
+        if can_sum_memo(remaining, nums, memo):
+            memo[target] = True
+            return True
+
+    memo[target] = False
+    return False
+
+
+def can_sum_tabulation(target: int, nums: list[int]) -> bool:
+    if target < 0:
+        return False
+
+    can_sum = [False]*(target+1)
+
+    can_sum[0] = True
+
+    for i in range(target):
+        if can_sum[i]:
+            for n in nums:
+                t = i + n
+                if t == target:
+                    return True
+                elif t < target:
+                    can_sum[t] = True
+    return False
+
+
+def test_can_sum():
+    assert can_sum_recursive(7, [5, 3, 1, 4])
+    assert can_sum_recursive(100, [30, 11, 24])  # 24 + 24 + 11 + 11 + 30
+    assert not can_sum_recursive(7, [6, 9, 2, 4])
+
+    assert can_sum_memo(7, [5, 3, 1, 4])
+    assert can_sum_memo(100, [30, 11, 24])
+    assert not can_sum_memo(7, [6, 9, 2, 4])
+    assert not can_sum_memo(69, [2, 4])
+    assert not can_sum_memo(300, [7, 14])
+
+    assert can_sum_tabulation(7, [5, 3, 1, 4])
+    assert can_sum_tabulation(100, [30, 11, 24])
+    assert not can_sum_tabulation(7, [6, 9, 2, 4])
+    assert not can_sum_tabulation(69, [2, 4])
+    assert not can_sum_tabulation(300, [7, 14])
+
+
+"""
+How Sum:
+Return an array containing any combination of elements that add up exactly to
+target. Return None otherwise. If there are multiple combinations, return any
+single one.
+The numbers are all non-negative
+Each number in the array can be used any number of times
+"""
+
+
+def how_sum_recursive(target: int, nums: list[int]) -> list[int] | None:
+    if target < 0:
+        return None
+    if target == 0:
+        return []
+    for n in nums:
+        result = how_sum_recursive(target-n, nums)
+        if result is not None:
+            result.append(n)
+            return result
+
+
+def how_sum_memo(target: int, nums: list[int], memo: dict[int, list[int]] = None) -> list[int] | None:
+    if not memo:
+        memo = {0: []}
+
+    if target in memo:
+        result = memo[target]
+        return result.copy() if result is not None else None
+
+    if target < 0:
+        return None
+
+    for n in nums:
+        result = how_sum_memo(target-n, nums, memo)
+        if result is not None:
+            result.append(n)
+            memo[target] = result
+            return result.copy()
+
+    memo[target] = None
+
+
+def how_sum_tabulation(target: int, nums: list[int]) -> list[int] | None:
+    if target < 0:
+        return None
+
+    how_sum: list[list[int] | None] = [None]*(target+1)
+    how_sum[0] = []
+    for i in range(target+1):
+        if how_sum[i] is None:
+            continue
+        for n in nums:
+            t = i + n
+            if t == target:
+                return [*how_sum[i], n]
+            if t < target and how_sum[t] is None:
+                how_sum[t] = [*how_sum[i], n]
+
+    return None
+
+
+def test_how_sum():
+    assert how_sum_recursive(7, [2, 4]) is None
+    assert how_sum_recursive(7, [5, 3, 1, 4]) == [1, 1, 5]
+    assert how_sum_recursive(100, [30, 11, 24]) == [24, 24, 11, 11, 30]
+
+    assert how_sum_memo(7, [2, 4]) is None
+    assert how_sum_memo(300, [7, 14]) is None
+    assert how_sum_memo(7, [5, 3, 1, 4]) == [1, 1, 5]
+    assert how_sum_memo(100, [30, 11, 24]) == [24, 24, 11, 11, 30]
+
+    assert how_sum_tabulation(7, [2, 4]) is None
+    assert how_sum_tabulation(300, [7, 14]) is None
+    assert how_sum_tabulation(7, [5, 3, 1, 4]) == [1, 1, 5]
+    assert how_sum_tabulation(100, [30, 11, 24]) == [11, 11, 24, 24, 30]
+
+
+"""
+Best Sum:
+Return an array containing the shortest combination of elements that add up
+exactly to target. Return None otherwise. If there are multiple combinations,
+return any single one.
+The numbers are all non-negative
+Each number in the array can be used any number of times
+"""
+
+
+def best_sum_recursive(target: int, nums: list[int]) -> list[int] | None:
+    if target < 0:
+        return None
+    if target == 0:
+        return []
+
+    result = None
+    for n in nums:
+        t = target - n
+        candidate = best_sum_recursive(t, nums)
+        if candidate is not None and (not result or len(candidate) < len(result)-1):
+            result = [*candidate, n]
+
+    return result
+
+
+def best_sum_memo(target: int, nums: list[int], memo: dict[int, list[int]] = None) -> list[int] | None:
+    if target < 0:
+        return None
+
+    if not memo:
+        memo = {0: []}
+    if target in memo:
+        return memo[target]
+
+    result = None
+    for n in nums:
+        t = target - n
+        candidate = best_sum_memo(t, nums, memo)
+        if candidate is not None and (not result or len(candidate) < len(result)-1):
+            result = [*candidate, n]
+
+    memo[target] = result
+    return result
+
+
+def best_sum_tabulation(target: int, nums: list[int]) -> list[int] | None:
+    if target < 0:
+        return None
+
+    best_sum = [None]*(target+1)
+    best_sum[0] = []
+
+    for i in range(target+1):
+        current_sum = best_sum[i]
+        if current_sum is None:
+            continue
+        for n in nums:
+            t = i + n
+            if t <= target and (best_sum[t] is None or len(current_sum) < len(best_sum[t])-1):
+                best_sum[t] = [*current_sum, n]
+
+    return best_sum[target]
+
+
+def test_best_sum():
+    assert best_sum_recursive(7, [2, 4]) is None
+    assert best_sum_recursive(7, [5, 3, 1, 4]) == [4, 3]
+    assert best_sum_recursive(100, [30, 11, 24]) == [24, 24, 11, 11, 30]
+
+    assert best_sum_memo(7, [2, 4]) is None
+    assert best_sum_memo(300, [7, 14]) is None
+    assert best_sum_memo(7, [5, 3, 1, 4]) == [4, 3]
+    assert best_sum_memo(100, [30, 11, 24]) == [24, 24, 11, 11, 30]
+
+    assert best_sum_tabulation(7, [2, 4]) is None
+    assert best_sum_tabulation(300, [7, 14]) is None
+    assert best_sum_tabulation(7, [5, 3, 1, 4]) == [3, 4]
+    assert best_sum_tabulation(100, [30, 11, 24]) == [11, 11, 24, 24, 30]
+
+
+"""
+Can Construct
+
+Given a target string and a word_bank (list of strings), return a boolean
+indicating whether or not target can be constructed from the elements of the
+word_bank.
+
+You may reuse elements of word_bank any number of times.
+"""
+
+
+def can_construct_recursive(target: str, word_bank: list[str]) -> bool:
+    if target == "":
+        return True
+
+    for pre in word_bank:
+        if target.find(pre) == 0 and can_construct_recursive(target[len(pre):], word_bank):
+            return True
+
+    return False
+
+
+def can_construct_memo(target: str, word_bank: list[str], memo: dict[str, bool] = None) -> bool:
+    if not memo:
+        memo = {"": True}
+
+    if target in memo:
+        return memo[target]
+
+    for pre in word_bank:
+        if target.find(pre) == 0 and can_construct_memo(target[len(pre):], word_bank, memo):
+            memo[target] = True
+            return True
+
+    memo[target] = False
+    return False
+
+
+def can_construct_tabulation(target: str, word_bank: list[str]) -> bool:
+    can_construct = [False]*(len(target)+1)
+    can_construct[0] = True
+
+    for i in range(len(target)+1):
+        if not can_construct[i]:
+            continue
+        remaining = target[i:]
+        for w in word_bank:
+            if remaining.find(w) == 0:
+                can_construct[i+len(w)] = True
+
+    return can_construct[len(target)]
+
+
+def test_can_construct():
+    assert can_construct_recursive(
+        "abcdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd'])
+    assert not can_construct_recursive(
+        "abcxdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd'])
+    # assert not can_construct_recursive("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef", [
+    #                          'e', 'ee', 'eee', 'eeee', 'eeeee', 'eeeeee'])
+
+    assert can_construct_memo(
+        "abcdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd'])
+    assert not can_construct_memo(
+        "abcxdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd'])
+    assert not can_construct_memo("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef", [
+        'e', 'ee', 'eee', 'eeee', 'eeeee', 'eeeeee'])
+
+    assert can_construct_tabulation(
+        "abcdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd'])
+    assert not can_construct_tabulation(
+        "abcxdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd'])
+    assert not can_construct_tabulation("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef", [
+        'e', 'ee', 'eee', 'eeee', 'eeeee', 'eeeeee'])
+
+
+"""
+Count Construct
+
+Given a target string and a word_bank (list of strings), return the number of
+ways that the target string can be constructed from the elements of the
+word_bank.
+
+You may reuse elements of word_bank any number of times.
+"""
+
+
+def count_construct_recursive(target: str, word_bank: list[str]) -> int:
+    if target == "":
+        return 1
+
+    num_ways = 0
+    for pre in word_bank:
+        if target.find(pre) == 0:
+            num_ways += count_construct_recursive(target[len(pre):], word_bank)
+
+    return num_ways
+
+
+def count_construct_memo(target: str, word_bank: list[str], memo: dict[str, int] = None) -> int:
+    if memo is None:
+        memo = {"": 1}
+
+    if target in memo:
+        return memo[target]
+
+    num_ways = 0
+    for pre in word_bank:
+        if target.find(pre) == 0:
+            num_ways += count_construct_memo(
+                target[len(pre):], word_bank, memo)
+
+    memo[target] = num_ways
+    return num_ways
+
+
+def count_construct_tabulation(target: str, word_bank: list[str]) -> int:
+    count_construct = [0]*(len(target)+1)
+    count_construct[0] = 1
+
+    for i in range(len(target)+1):
+        if count_construct[i] != 0:
+            t = target[i:]
+            for pre in word_bank:
+                if t.find(pre) == 0:
+                    count_construct[i+len(pre)] += count_construct[i]
+
+    return count_construct[len(target)]
+
+
+def test_count_construct():
+    assert count_construct_recursive(
+        'purple', ['purp', 'p', 'ur', 'le', 'purpl']) == 2
+    assert count_construct_recursive(
+        'abcdef', ['ab', 'abc', 'cd', 'def', 'abcd']) == 1
+    assert count_construct_recursive(
+        "abcxdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd']) == 0
+    assert count_construct_recursive(
+        "enterapotentpot", ['a', 'p', 'ent', 'enter', 'ot', 'o', 't']) == 4
+
+    assert count_construct_memo(
+        'purple', ['purp', 'p', 'ur', 'le', 'purpl']) == 2
+    assert count_construct_memo(
+        'abcdef', ['ab', 'abc', 'cd', 'def', 'abcd']) == 1
+    assert count_construct_memo(
+        "abcxdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd']) == 0
+    assert count_construct_memo(
+        "enterapotentpot", ['a', 'p', 'ent', 'enter', 'ot', 'o', 't']) == 4
+    assert count_construct_memo("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef", [
+        'e', 'ee', 'eee', 'eeee', 'eeeee', 'eeeeee']) == 0
+
+    assert count_construct_tabulation(
+        'purple', ['purp', 'p', 'ur', 'le', 'purpl']) == 2
+    assert count_construct_tabulation(
+        'abcdef', ['ab', 'abc', 'cd', 'def', 'abcd']) == 1
+    assert count_construct_tabulation(
+        "abcxdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd']) == 0
+    assert count_construct_tabulation(
+        "enterapotentpot", ['a', 'p', 'ent', 'enter', 'ot', 'o', 't']) == 4
+    assert count_construct_tabulation("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef", [
+        'e', 'ee', 'eee', 'eeee', 'eeeee', 'eeeeee']) == 0
+
+
+"""
+All Construct
+
+Given a target string and a word_bank (list of strings), return a 2D array
+containing all of the ways that the target string can be constructed from the
+elements of the word_bank. Each element of the 2D array should represent one
+combination that constructs  the target string.
+
+You may reuse elements of word_bank any number of times.
+"""
+
+
+def all_construct_recursive(target: str, word_bank: list[str]) -> list[list[str]]:
+    if target == "":
+        return [[]]
+
+    result = []
+    for w in word_bank:
+        if target.find(w) == 0:
+            for s in all_construct_recursive(target[len(w):], word_bank):
+                result.append([w, *s])
+
+    return result
+
+
+def all_construct_memo(target: str, word_bank: list[str], memo: dict[str, list[list[str]]] = None) -> list[list[str]]:
+    if memo is None:
+        memo = {"": [[]]}
+    if target in memo:
+        return memo[target]
+
+    result = []
+    for w in word_bank:
+        if target.find(w) == 0:
+            for s in all_construct_memo(target[len(w):], word_bank, memo):
+                result.append([w, *s])
+
+    memo[target] = result
+    return result
+
+
+def all_construct_tabulation(target: str, word_bank: list[str]) -> list[list[str]]:
+    all_construct = [None]*(len(target)+1)
+    all_construct[0] = [[]]
+
+    for i in range(len(all_construct)):
+        if all_construct[i] is None:
+            continue
+        t = target[i:]
+        for w in word_bank:
+            if t.find(w) != 0:
+                continue
+            if all_construct[i+len(w)] is None:
+                all_construct[i+len(w)] = []
+            for s in all_construct[i]:
+                all_construct[i+len(w)].append([*s, w])
+
+    return all_construct[-1] or []
+
+
+def test_all_construct():
+    assert all_construct_recursive(
+        'purple', ['purp', 'p', 'ur', 'le', 'purpl']) == [['purp', 'le'], ['p', 'ur', 'p', 'le']]
+    assert all_construct_recursive(
+        'abcdef', ['ab', 'abc', 'cd', 'def', 'abcd']) == [['abc', 'def']]
+    assert all_construct_recursive(
+        "abcxdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd']) == []
+    assert all_construct_recursive(
+        "enterapotentpot", ['a', 'p', 'ent', 'enter', 'ot', 'o', 't']) == [
+            ['enter', 'a', 'p', 'ot', 'ent', 'p', 'ot'],
+            ['enter', 'a', 'p', 'ot', 'ent', 'p', 'o', 't'],
+            ['enter', 'a', 'p', 'o', 't', 'ent', 'p', 'ot'],
+            ['enter', 'a', 'p', 'o', 't', 'ent', 'p', 'o', 't']]
+
+    assert all_construct_memo(
+        'purple', ['purp', 'p', 'ur', 'le', 'purpl']) == [['purp', 'le'], ['p', 'ur', 'p', 'le']]
+    assert all_construct_memo(
+        'abcdef', ['ab', 'abc', 'cd', 'def', 'abcd']) == [['abc', 'def']]
+    assert all_construct_memo(
+        "abcxdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd']) == []
+    assert all_construct_memo(
+        "enterapotentpot", ['a', 'p', 'ent', 'enter', 'ot', 'o', 't']) == [
+            ['enter', 'a', 'p', 'ot', 'ent', 'p', 'ot'],
+            ['enter', 'a', 'p', 'ot', 'ent', 'p', 'o', 't'],
+            ['enter', 'a', 'p', 'o', 't', 'ent', 'p', 'ot'],
+            ['enter', 'a', 'p', 'o', 't', 'ent', 'p', 'o', 't']]
+    assert all_construct_memo("eeeeeeeeeeeeeeeeeeeeeeeeeeef", [
+        'e', 'ee', 'eee', 'eeee', 'eeeee', 'eeeeee']) == []
+
+    assert all_construct_tabulation(
+        'purple', ['purp', 'p', 'ur', 'le', 'purpl']) == [['purp', 'le'], ['p', 'ur', 'p', 'le']]
+    assert all_construct_tabulation(
+        'abcdef', ['ab', 'abc', 'cd', 'def', 'abcd']) == [['abc', 'def']]
+    assert all_construct_tabulation(
+        "abcxdef", ['ab', 'bc', 'def', 'cd', 'ef', 'abd']) == []
+    assert all_construct_tabulation(
+        "enterapotentpot", ['a', 'p', 'ent', 'enter', 'ot', 'o', 't']) == [
+            ['enter', 'a', 'p', 'ot', 'ent', 'p', 'ot'],
+            ['enter', 'a', 'p', 'o', 't', 'ent', 'p', 'ot'],
+            ['enter', 'a', 'p', 'ot', 'ent', 'p', 'o', 't'],
+            ['enter', 'a', 'p', 'o', 't', 'ent', 'p', 'o', 't']]
+    assert all_construct_tabulation("eeeeeeeeeeeeeeeeef", [
+        'e', 'ee', 'eee', 'eeee', 'eeeee', 'eeeeee']) == []
+
+
+def main():
+    test_fib()
+    test_grid_traveller()
+    test_can_sum()
+    test_how_sum()
+    test_best_sum()
+    test_can_construct()
+    test_count_construct()
+    test_all_construct()
+
+
+main()

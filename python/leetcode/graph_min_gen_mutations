@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+
+"""
+Ref: https://leetcode.com/problems/minimum-genetic-mutation
+
+Minimum Genetic Mutation
+
+A gene string can be represented by an 8-character long string, with choices
+from 'A', 'C', 'G', and 'T'.
+
+Suppose we need to investigate a mutation from a gene string startGene to a gene
+string endGene where one mutation is defined as one single character changed in
+the gene string.
+
+For example, "AACCGGTT" --> "AACCGGTA" is one mutation.
+There is also a gene bank 'bank' that records all the valid gene mutations. A
+gene must be in bank to make it a valid gene string.
+
+Given the two gene strings startGene and endGene and the gene bank 'bank',
+return the minimum number of mutations needed to mutate from startGene to
+endGene. If there is no such a mutation, return -1.
+
+Note that the starting point is assumed to be valid, so it might not be included
+in the bank.
+
+
+Example 1:
+
+Input: startGene = "AACCGGTT", endGene = "AACCGGTA", bank = ["AACCGGTA"]
+Output: 1
+
+
+Example 2:
+
+Input: startGene = "AACCGGTT", endGene = "AAACGGTA", bank =
+["AACCGGTA","AACCGCTA","AAACGGTA"]
+Output: 2
+
+Constraints:
+
+0 <= bank.length <= 10
+startGene.length == endGene.length == bank[i].length == 8
+startGene, endGene, and bank[i] consist of only the characters ['A', 'C', 'G',
+'T'].
+"""
+
+
+from collections import deque
+
+
+class Solution:
+    def minMutation_with_path(self, startGene: str, endGene: str, bank: list[str]) -> int:
+        if endGene not in bank:
+            return -1
+
+        L = [ord(c) for c in 'ACGT']
+
+        # generate all possible mutations of the 'gene'
+        def mutations() -> list[str]:
+            result = []
+            b = bytearray(gene, encoding='ascii')
+            for i in range(len(b)):
+                org = b[i]
+                for c in L:
+                    b[i] = c
+                    m = b.decode('ascii')
+                    if m != gene and m not in visited and m in bank:
+                        result.append(m)
+                b[i] = org
+
+            return result
+
+        q = deque([(startGene, [startGene])])
+        visited = {startGene}
+        while q:
+            gene, path = q.popleft()
+            for g in mutations():
+                if g == endGene:
+                    return len(path)
+                visited.add(g)
+                q.append((g, path+[g]))
+
+        return -1
+
+    def minMutation(self, startGene: str, endGene: str, bank: list[str]) -> int:
+        if endGene not in bank:
+            return -1
+
+        L = [ord(c) for c in 'ACGT']
+
+        # generate all possible mutations of the 'gene'
+        def mutations() -> list[str]:
+            result = []
+            b = bytearray(gene, encoding='ascii')
+            for i in range(len(b)):
+                org = b[i]
+                for c in L:
+                    b[i] = c
+                    m = b.decode('ascii')
+                    if m != gene and m not in visited and m in bank:
+                        result.append(m)
+                b[i] = org
+
+            return result
+
+        q = deque([(startGene, 0)])
+        visited = {startGene}
+        while q:
+            gene, path = q.popleft()
+            for g in mutations():
+                if g == endGene:
+                    return path+1
+                visited.add(g)
+                q.append((g, path+1))
+
+        return -1
+
+
+def main():
+    startGene = "AACCGGTT"
+    endGene = "AACCGGTA"
+    bank = ["AACCGGTA"]
+    assert Solution().minMutation(startGene, endGene, bank) == 1
+
+    startGene = "AACCGGTT"
+    endGene = "AAACGGTA"
+    bank = ["AACCGGTA", "AACCGCTA", "AAACGGTA"]
+    assert Solution().minMutation(startGene, endGene, bank) == 2
+
+
+main()

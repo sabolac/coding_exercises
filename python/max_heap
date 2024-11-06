@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+
+
+"""
+The default heap functions in heapq module provides a min heap implementation
+Here we redefine the functions so it provides a max heap implementation
+"""
+
+
+import heapq
+import random
+
+
+heapify = heapq._heapify_max
+heappop = heapq._heappop_max
+heapreplace = heapq._heapreplace_max
+
+
+def heappush(heap, item):
+    """Push item onto heap, maintaining the heap invariant."""
+    heap.append(item)
+    heapq._siftdown_max(heap, 0, len(heap)-1)
+
+
+def heappushpop(heap, item):
+    """Fast version of a heappush followed by a heappop."""
+    if heap and heap[0] > item:
+        item, heap[0] = heap[0], item
+        heapq._siftup_max(heap, 0)
+    return item
+
+
+def main():
+    h = random.sample(range(100), 10)
+    heapify(h)
+
+    heappushpop(h, 10)
+    heappushpop(h, 10)
+    heappush(h, 250)
+    heappush(h, 200)
+    heappush(h, 201)
+    heappush(h, 301)
+
+    sorted_h = sorted(h, reverse=True)
+    sorted_h_2 = []
+    for _ in range(len(h)):
+        sorted_h_2.append(heappop(h))
+
+    assert sorted_h == sorted_h_2
+
+
+main()

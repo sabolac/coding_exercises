@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+
+
+"""
+Ref: https://leetcode.com/problems/maximum-depth-of-binary-tree
+
+Maximum Depth of Binary Tree
+
+Given the root of a binary tree, return its maximum depth.
+
+A binary tree's maximum depth is the number of nodes along the longest path from
+the root node down to the farthest leaf node.
+
+
+
+Example 1:
+
+Input: root = [3,9,20,null,null,15,7]
+Output: 3
+
+
+Example 2:
+
+Input: root = [1,null,2]
+Output: 2
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 10^4].
+-100 <= Node.val <= 100
+"""
+
+
+from typing import Self
+from collections import deque
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val: int = 0, left: Self = None, right: Self = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    @staticmethod
+    def from_list(l: list[int]) -> Self | None:
+        if not l:
+            return None
+
+        root = TreeNode(l[0])
+        q = deque()
+        q.append(root)
+
+        i = 0
+        while i < len(l)-2:
+            n = q.popleft()
+
+            i += 1
+            if l[i] is not None:
+                n.left = TreeNode(l[i])
+                q.append(n.left)
+
+            i += 1
+            if l[i] is not None:
+                n.right = TreeNode(l[i])
+                q.append(n.right)
+
+        return root
+
+
+class Solution:
+    def maxDepth(self, root: TreeNode | None) -> int:
+        if not root:
+            return 0
+
+        return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right))
+
+    def maxDepth_non_recursive(self, root: TreeNode | None) -> int:
+        s = deque()
+        s.append((root, 1))
+
+        depth = 0
+        while s:
+            n, d = s.pop()
+            if n:
+                s.append((n.left, d+1))
+                s.append((n.right, d+1))
+                depth = max(depth, d)
+
+        return depth
+
+
+def main():
+    r = TreeNode.from_list([3, 9, 20, None, None, 15, 7])
+    assert Solution().maxDepth(r) == 3
+
+
+main()

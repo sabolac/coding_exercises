@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+
+# Given a phone number and a list of words return those words that are in the
+# phone number
+
+# Number	Letter
+# 0	none
+# 1	none
+# 2	ABC
+# 3	DEF
+# 4	GHI
+# 5	JKL
+# 6	MNO
+# 7	PQRS
+# 8	TUV
+# 9	WXYZ
+
+DIGIT_TO_LETTERS = {
+    0: "",
+    1: "",
+    2: "abc",
+    3: "def",
+    4: "ghi",
+    5: "jkl",
+    6: "mno",
+    7: "pqrs",
+    8: "tuv",
+    9: "wxyz"
+}
+LETTER_TO_DIGIT = {c: str(d) for d, w in DIGIT_TO_LETTERS.items() for c in w}
+
+PHONE_NUMBER = "3662277"
+WORDS = ["foo", "bar", "baz", "foobar", "emo", "cap", "car", "cat"]
+EXPECTED_OUTPUT = {"foo", "bar", "foobar", "emo", "cap", "car"}
+
+
+def word_to_digit(w):
+    return "".join([LETTER_TO_DIGIT[c] for c in w])
+
+
+def word_in_number(w):
+    return word_to_digit(w) in PHONE_NUMBER
+
+
+WORDS_IN_NUMBER = {w for w in WORDS if word_in_number(w)}
+assert EXPECTED_OUTPUT == WORDS_IN_NUMBER
+print(WORDS_IN_NUMBER)
